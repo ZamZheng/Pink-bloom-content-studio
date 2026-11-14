@@ -1,0 +1,12 @@
+node_modules/
+output/*
+!output/.gitkeep
+.env
+.env.*
+!.env.example
+*.log
+.DS_Store
+.playwright/
+playwright-report/
+test-results/
+.tmp/

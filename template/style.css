@@ -1,0 +1,69 @@
+/* V0.1 工程占位版式，尚非用户确认的品牌视觉母版。 */
+:root {
+  --canvas-width: 1080px;
+  --canvas-height: 1350px;
+  --font-serif: "Noto Serif SC", serif;
+  --font-sans: "Noto Sans SC", sans-serif;
+  --color-ink: #43383e;
+  --color-muted: #71656b;
+  --color-accent: #945769;
+  --color-line: #decbd1;
+  --color-panel: #fff8fa;
+  --background-start: #fbf3f5;
+  --background-end: #f2e7eb;
+  --surface: rgb(255 255 255 / 90%);
+  --outer-padding: 56px;
+  --inner-padding: 48px;
+  --gap: 24px;
+  --radius: 24px;
+  --title-size: 56px;
+  --intro-size: 29px;
+  --point-size: 30px;
+  --reminder-size: 25px;
+  --meta-size: 24px;
+  --brand-size: 25px;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body { font-family: var(--font-sans); color: var(--color-ink); }
+p, h1 { margin: 0; }
+#card {
+  position: relative;
+  width: var(--canvas-width);
+  height: var(--canvas-height);
+  padding: var(--outer-padding);
+  overflow: hidden;
+  background: linear-gradient(150deg, var(--background-start), var(--background-end));
+}
+.background { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+[hidden] { display: none !important; }
+.surface {
+  position: relative;
+  display: grid;
+  grid-template-rows: 90px 168px 132px minmax(0, 1fr) 158px 84px;
+  gap: var(--gap);
+  width: 100%;
+  height: 100%;
+  padding: var(--inner-padding);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+[data-region] { min-width: 0; min-height: 0; overflow-wrap: anywhere; }
+#column, #issue, #title, #introduction, .point-text, #reminder, #brand-cn, #brand-en { white-space: pre-wrap; }
+.masthead { display: flex; justify-content: space-between; gap: 24px; font-size: var(--meta-size); font-weight: 600; color: var(--color-accent); }
+.column-group { display: flex; gap: 10px; min-width: 0; align-items: flex-start; }
+.icon { width: 32px; height: 32px; flex-shrink: 0; }
+#issue { max-width: 240px; flex-shrink: 0; }
+#review-status { font-size: 19px; line-height: 1.6; color: var(--color-muted); margin-top: 12px; }
+#title { font-family: var(--font-serif); font-weight: 600; font-size: var(--title-size); line-height: 1.4; letter-spacing: 1px; }
+#introduction { font-size: var(--intro-size); line-height: 1.8; color: var(--color-muted); }
+#points { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; justify-content: flex-start; gap: 22px; counter-reset: point; }
+.point { display: flex; align-items: flex-start; gap: 18px; font-size: var(--point-size); line-height: 1.65; flex-shrink: 0; }
+.point::before { counter-increment: point; content: counter(point, decimal-leading-zero); color: var(--color-accent); font-size: 22px; font-weight: 600; line-height: 2.25; flex: 0 0 36px; }
+.point-text { flex: 1; }
+#reminder-box { border-left: 3px solid var(--color-line); background: var(--color-panel); padding: 16px 22px; }
+.reminder-label { font-size: 20px; font-weight: 600; color: var(--color-accent); margin-bottom: 6px; }
+#reminder { font-size: var(--reminder-size); line-height: 1.7; }
+footer { border-top: 1px solid var(--color-line); padding-top: 16px; }
+#brand-cn { font-size: var(--brand-size); font-weight: 600; line-height: 1.5; }
+#brand-en { font-size: 19px; line-height: 1.5; color: var(--color-muted); }

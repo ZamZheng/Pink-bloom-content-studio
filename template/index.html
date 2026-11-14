@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=1080, initial-scale=1">
+  <title>Pink Bloom · V0.1 排版测试</title>
+  <link rel="stylesheet" href="../node_modules/@fontsource/noto-serif-sc/600.css">
+  <link rel="stylesheet" href="../node_modules/@fontsource/noto-sans-sc/400.css">
+  <link rel="stylesheet" href="../node_modules/@fontsource/noto-sans-sc/600.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <article id="card" aria-label="康复知识卡片">
+    <img id="background" class="background" alt="" hidden>
+    <div class="surface">
+      <header data-region="栏目信息">
+        <div class="masthead">
+          <div class="column-group"><img class="icon" src="../assets/icons/note.svg" alt=""><span id="column" data-region="栏目"></span></div>
+          <span id="issue" data-region="期数"></span>
+        </div>
+        <p id="review-status" data-region="审核状态"></p>
+      </header>
+      <h1 id="title" data-region="主标题"></h1>
+      <p id="introduction" data-region="引导语"></p>
+      <ol id="points" data-region="知识点列表"></ol>
+      <aside id="reminder-box" data-region="提醒区域">
+        <p class="reminder-label">提醒</p>
+        <p id="reminder" data-region="医学提醒"></p>
+      </aside>
+      <footer data-region="落款">
+        <p id="brand-cn" data-region="中文落款"></p>
+        <p id="brand-en" data-region="英文落款"></p>
+      </footer>
+    </div>
+  </article>
+</body>
+</html>
