@@ -1,6 +1,6 @@
 {
   "name": "pink-bloom-content-studio",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
   "type": "module",
   "description": "Pink Bloom 患者康复知识卡片本地图文排版器",

@@ -1,8 +1,8 @@
-# Pink Bloom Content Studio · V0.2
+# Pink Bloom Content Studio · V0.3
 
 为「向光而行 粉红伙伴社区（Pink Bloom）」生成患者康复知识卡片的轻量 Node.js 工具。JSON 提供文案，统一设计规范与布局配置驱动 HTML/CSS，自然流式排版，由 Playwright Chromium 导出高清 PNG。无需 Web 服务、登录或数据库，不需要个人电脑持续开机。
 
-**本阶段仅建立可配置架构与标准纵向编辑布局。设计规范、背景和样例均为工程占位 draft，不是最终品牌视觉；示例不含医疗建议，未经医学审核，不用于正式发布。**
+**默认示例仍是工程占位；第002期使用独立的参考编辑布局，视觉状态 draft、医学状态 pending_review，待用户视觉评价与专业审核。尚未覆盖栏目默认样式，不用于正式发布。**
 
 ## 安装（Codex Cloud / Linux）
 
@@ -49,7 +49,7 @@ npm run render -- --input content/issue-demo.json --config config/issues/issue-d
 | 文件区域 | 作用 |
 | --- | --- |
 | `config/design/` | 品牌基础规范：字体、颜色、字号层级、字重、行高、线条、图标与基础间距 |
-| `config/layouts/` | Layout Presets：布局能力与参数；本阶段只实现标准纵向编辑能力 |
+| `config/layouts/` | Layout Presets：布局能力与参数；默认纵向编辑能力及独立参考编辑能力 |
 | `config/backgrounds/` | 独立图片、安全区、视觉重心、裁切焦点与推荐布局 |
 | `config/issues/` | 每期选择版本、文字安全区及参数覆盖 |
 | `config/versions.lock.json` | 用户确认后的版本摘要登记；当前没有已确认版本 |
@@ -67,7 +67,7 @@ npm run render -- --input content/issue-demo.json --config config/issues/issue-d
 | `issue` | 非空字符串，如 `"001"`，保留前导零 |
 | `title` | 非空字符串，主标题，`\n` 表示换行 |
 | `introduction` | 非空字符串，引导语 |
-| `points` | 非空字符串数组，至少一项，顺序保持不变 |
+| `points` | 默认布局为非空字符串数组；参考编辑布局为 `{heading, body, icon}` 对象数组；至少一项，顺序不变 |
 | `reminder` | 非空字符串，医学提醒 |
 | `brand_cn` / `brand_en` | 非空字符串，中英文组织名称 |
 | `background` | 字符串；留空时使用背景档案的图片或渐变占位 |
@@ -89,7 +89,7 @@ npm test
 
 ## 字体、版本与范围
 
-字体使用锁定版本的开源 Noto Serif SC 600、Noto Sans SC 400/600，经本地 `@font-face` 加载，不依赖个人电脑字体。授权为 SIL OFL 1.1，随各 npm 字体包的 `LICENSE` 提供。不提交字体包或未经授权的商业字体。
+字体使用锁定版本的开源 Noto Serif SC 400/600、Noto Sans SC 400/600，经本地 `@font-face` 加载，不依赖个人电脑字体。授权为 SIL OFL 1.1，随各 npm 字体包的 `LICENSE` 提供。不提交字体包或未经授权的商业字体。
 
 `AGENTS.md` 记录后续工程约束。已确认配置必须登记 SHA-256，变更时新增版本，Git 保留历史；V0.1 源码保留在初始提交 `939b9e7`。当前所有配置仍待用户视觉母版确认。
 
@@ -101,3 +101,14 @@ npm test
 
 - [第001期视觉参数提取稿](docs/reference/issue-001-analysis.md)：目测估算、现有能力差距与下一轮母版工作；尚未改动运行模板。
 - [完整工作流说明](docs/workflow.md)：各部分责任、当前可运行流程，以及未来 Notion 到图片的协作链。
+
+## 第002期（独立配置，待审核）
+
+```bash
+npm run preview -- --input content/issue-002.json --config config/issues/issue-002.v1.json --output output/issue-002.html
+npm run render -- --input content/issue-002.json --config config/issues/issue-002.v1.json --output output/issue-002.png
+```
+
+本期文案为用户提供的完整稿，`review_status: "pending_review"`。背景原文件已进入仓库，无需运行时重新下载。参考编辑布局支持知识点图标、小标题/说明、标题关键词与落款局部颜色、独立提醒和右下落款。原默认 HTML/CSS 保持不变，日常参数调整使用本期 JSON 配置。
+
+详见 [第002期制作与验收记录](docs/issues/issue-002.md)。

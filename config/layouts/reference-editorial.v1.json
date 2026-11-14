@@ -1,0 +1,22 @@
+{
+  "id": "reference-editorial",
+  "version": "1",
+  "status": "draft",
+  "description": "独立参考编辑布局：图标、编号、小标题与说明自然流动，分区避让背景",
+  "capability": "reference-editorial",
+  "parameters": {
+    "titleWidth": 800,
+    "introGap": 26,
+    "pointsGap": 26,
+    "pointIconSize": 92,
+    "pointIconColumn": 112,
+    "pointNumberWidth": 80,
+    "pointColumnGap": 30,
+    "pointTextGap": 4,
+    "rowPadding": 9,
+    "reminderRadius": 48,
+    "reminderIconWidth": 100,
+    "reminderPaddingX": 24,
+    "reminderPaddingY": 16
+  }
+}

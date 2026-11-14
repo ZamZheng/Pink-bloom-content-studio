@@ -1,0 +1,18 @@
+{
+  "column": "康复小纸条",
+  "issue": "NO.002",
+  "title": "治疗结束了，\n怎么还是觉得累？",
+  "introduction": "疗程告一段落，身体却好像还没恢复精神。\n遇到这样的情况，可以先从这几件小事做起。",
+  "points": [
+    { "heading": "恢复需要一点时间", "body": "放疗等治疗结束后，疲劳仍可能持续数周甚至更久，体力通常需要逐渐恢复。", "icon": "calendar" },
+    { "heading": "把一天安排得松一点", "body": "精力好的时候先做重要的事，累了就休息，家务也可以分几次慢慢完成。", "icon": "clock" },
+    { "heading": "试着慢慢动起来", "body": "身体条件允许时，可以从短时间散步开始，循序渐进地恢复活动，不必急着达到以前的运动量。", "icon": "walk" },
+    { "heading": "留意疲劳的变化", "body": "记下什么时候最累、休息后是否好转，以及是否影响日常生活，复诊时可以告诉医生。", "icon": "notebook" }
+  ],
+  "reminder_title": "一份重要提醒",
+  "reminder": "如果疲劳持续加重、明显影响日常活动，或伴有气短等不适，请及时联系治疗团队。",
+  "brand_cn": "向光而行 粉红伙伴社区",
+  "brand_en": "PINK BLOOM",
+  "background": "assets/backgrounds/issue-002.png",
+  "review_status": "pending_review"
+}

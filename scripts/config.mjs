@@ -35,20 +35,35 @@ const parameters = {
   bodyWidth: [200, 1080], surfaceOpacity: [0, 1], decorationOpacity: [0, 1],
   titleAlign: ['left', 'center', 'right'], bodyAlign: ['left', 'center', 'right'],
 };
-function checkParameters(value, complete = false) {
+const referenceParameters = {
+  titleWidth: [200, 1080], introGap: [0, 100], pointsGap: [0, 100], pointIconSize: [40, 120],
+  pointIconColumn: [50, 140], pointNumberWidth: [40, 120], pointColumnGap: [0, 60],
+  pointTextGap: [0, 30], rowPadding: [0, 40], reminderRadius: [0, 100],
+  reminderIconWidth: [50, 140], reminderPaddingX: [0, 60], reminderPaddingY: [0, 60],
+};
+const templates = {
+  'editorial-flow': { html: 'template/index.html', css: 'template/style.css' },
+  'reference-editorial': { html: 'template/reference-editorial.html', css: 'template/reference-editorial.css' },
+};
+function checkParameters(value, complete = false, capability = 'editorial-flow') {
+  const schema = capability === 'reference-editorial' ? { ...parameters, ...referenceParameters } : parameters;
   if (!plain(value)) fail('parameters 必须为对象');
   for (const [key, setting] of Object.entries(value)) {
-    if (!Object.hasOwn(parameters, key)) fail(`未知排版参数：${key}`);
-    const allowed = parameters[key];
+    if (!Object.hasOwn(schema, key)) fail(`未知排版参数：${key}`);
+    const allowed = schema[key];
     if (typeof allowed[0] === 'string') {
       if (!allowed.includes(setting)) fail(`${key} 只支持 ${allowed.join('/')}`);
     } else number(setting, ...allowed, key);
   }
-  if (complete) for (const key of Object.keys(parameters)) if (!Object.hasOwn(value, key)) fail(`缺少参数 ${key}`);
+  if (complete) for (const key of Object.keys(schema)) if (!Object.hasOwn(value, key)) fail(`缺少参数 ${key}`);
 }
 const sizeTokens = ['titleSize', 'introSize', 'pointSize', 'reminderSize', 'metaSize', 'brandSize', 'smallSize', 'labelSize', 'numberSize'];
 const pixelTokens = ['radius', 'lineWidth', 'reminderLineWidth', 'iconSize', 'iconGap', 'inlineGap', 'numberWidth', 'reminderPadding', 'footerPadding', 'statusGap'];
 const lineTokens = ['titleLineHeight', 'bodyLineHeight', 'metaLineHeight'];
+const extraSizes = ['pointHeadingSize'];
+const extraLines = ['pointHeadingLineHeight'];
+const extraColors = ['numberColor', 'pointHeadingColor', 'brandPink', 'iconDiscColor'];
+const extraRatios = ['rowLineOpacity', 'iconDiscOpacity'];
 const weightTokens = { headingWeight: [600], bodyWeight: [400], labelWeight: [600] };
 const colorTokens = ['colorInk', 'colorMuted', 'colorAccent', 'colorLine', 'colorPanel', 'colorSurface', 'backgroundStart', 'backgroundEnd'];
 const kebab = key => key.replace(/[A-Z]/g, letter => `-${letter.toLowerCase()}`);
@@ -75,11 +90,11 @@ export async function loadPresentation(configFile = DEFAULT_CONFIG, contentBackg
   const design = await readReference(issue.design);
   const layout = await readReference(issue.layout);
   const background = await readReference(issue.background);
-  if (layout.capability !== 'editorial-flow') fail(`尚未实现布局能力：${layout.capability}；新增能力才需要修改 HTML/CSS`);
-  if (design.fonts?.heading !== 'Noto Serif SC' || design.fonts?.body !== 'Noto Sans SC') fail('本阶段字体必须使用已安装的 Noto Serif SC / Noto Sans SC');
+  if (!Object.hasOwn(templates, layout.capability)) fail(`尚未实现布局能力：${layout.capability}；新增能力才需要修改 HTML/CSS`);
+  if (design.fonts?.heading !== 'Noto Serif SC' || !['Noto Sans SC', 'Noto Serif SC'].includes(design.fonts?.body)) fail('字体必须使用已安装的 Noto Serif SC / Noto Sans SC');
   if (!plain(design.tokens)) fail('缺少设计 tokens');
   const tokens = design.tokens;
-  for (const key of Object.keys(tokens)) if (![...sizeTokens, ...pixelTokens, ...lineTokens, ...colorTokens, ...Object.keys(weightTokens)].includes(key)) fail(`未知设计 token：${key}`);
+  for (const key of Object.keys(tokens)) if (![...sizeTokens, ...pixelTokens, ...lineTokens, ...colorTokens, ...extraSizes, ...extraLines, ...extraColors, ...extraRatios, ...Object.keys(weightTokens)].includes(key)) fail(`未知设计 token：${key}`);
   const css = {};
   css['--font-heading'] = `"${design.fonts.heading}", serif`;
   css['--font-body'] = `"${design.fonts.body}", sans-serif`;
@@ -87,18 +102,20 @@ export async function loadPresentation(configFile = DEFAULT_CONFIG, contentBackg
     if (!allowed.includes(tokens[key])) fail(`${key} 必须使用已安装字重 ${allowed.join('/')}`);
     css[`--${kebab(key)}`] = String(tokens[key]);
   }
-  for (const key of [...sizeTokens, ...pixelTokens]) {
-    number(tokens[key], sizeTokens.includes(key) ? 16 : 0, sizeTokens.includes(key) ? 100 : 120, key);
+  for (const key of [...sizeTokens, ...pixelTokens, ...extraSizes.filter(key => Object.hasOwn(tokens, key))]) {
+    number(tokens[key], [...sizeTokens, ...extraSizes].includes(key) ? 16 : 0, [...sizeTokens, ...extraSizes].includes(key) ? 100 : 120, key);
     css[`--${kebab(key)}`] = `${tokens[key]}px`;
   }
-  for (const key of lineTokens) { number(tokens[key], 1.35, 2.5, key); css[`--${kebab(key)}`] = String(tokens[key]); }
-  for (const key of colorTokens) {
+  for (const key of [...lineTokens, ...extraLines.filter(key => Object.hasOwn(tokens, key))]) { number(tokens[key], 1.35, 2.5, key); css[`--${kebab(key)}`] = String(tokens[key]); }
+  for (const key of [...colorTokens, ...extraColors.filter(key => Object.hasOwn(tokens, key))]) {
     if (typeof tokens[key] !== 'string' || !/^#[a-f\d]{6}$/i.test(tokens[key])) fail(`${key} 必须为六位十六进制颜色`);
     css[`--${kebab(key)}`] = tokens[key];
   }
-  for (const layer of [design.layoutDefaults, layout.parameters, issue.parameters]) checkParameters(layer);
+  for (const key of extraRatios.filter(key => Object.hasOwn(tokens, key))) { number(tokens[key], 0, 1, key); css[`--${kebab(key)}`] = String(tokens[key]); }
+  if (layout.capability === 'reference-editorial') for (const key of [...extraSizes, ...extraLines, ...extraColors, ...extraRatios]) if (!Object.hasOwn(tokens, key)) fail(`参考编辑布局缺少 token：${key}`);
+  for (const layer of [design.layoutDefaults, layout.parameters, issue.parameters]) checkParameters(layer, false, layout.capability);
   const effective = { ...design.layoutDefaults, ...layout.parameters, ...issue.parameters };
-  checkParameters(effective, true);
+  checkParameters(effective, true, layout.capability);
   for (const [key, value] of Object.entries(effective)) css[`--${kebab(key)}`] = typeof value === 'number' && !key.endsWith('Opacity') ? `${value}px` : String(value);
   if (background.canvas?.width !== 1080 || background.canvas?.height !== 1350) fail('背景坐标系必须为 1080×1350');
   function rectangle(rect, label) {
@@ -123,6 +140,29 @@ export async function loadPresentation(configFile = DEFAULT_CONFIG, contentBackg
   const layoutRef = `${layout.id}@${layout.version}`;
   const warnings = [];
   if (!background.recommendedLayouts.includes(layoutRef)) warnings.push(`当前布局 ${layoutRef} 不在背景推荐列表中；仅提示，不自动切换`);
+  const regions = {};
+  if (layout.capability === 'reference-editorial') {
+    if (!plain(issue.regions)) fail('参考编辑布局需要 regions');
+    for (const region of ['masthead', 'main', 'reminder', 'footer']) {
+      const area = background.safeAreas.find(area => area.id === issue.regions[region]);
+      if (!area) fail(`找不到分区 ${region} 对应的安全区`);
+      regions[region] = area;
+      for (const key of ['x', 'y', 'width', 'height']) css[`--region-${region}-${key}`] = `${area[key]}px`;
+    }
+    if (regions.main.id !== safeArea.id) fail('main 分区必须与 safeArea 一致');
+    if (effective.titleWidth > safeArea.width) fail('标题宽度超出安全区');
+  }
+  const avoidAreas = background.avoidAreas || [];
+  if (!Array.isArray(avoidAreas)) fail('avoidAreas 必须为矩形数组');
+  for (const area of avoidAreas) rectangle(area, '背景避让区');
+  const fit = background.fit || 'cover';
+  if (!['contain', 'cover'].includes(fit)) fail('背景 fit 只允许 contain / cover');
+  css['--background-fit'] = fit;
+  const textEmphasis = issue.textEmphasis || {};
+  if (!plain(textEmphasis)) fail('textEmphasis 必须是对象');
+  for (const [key, words] of Object.entries(textEmphasis)) {
+    if (!['title', 'brand_cn'].includes(key) || !Array.isArray(words) || words.some(word => typeof word !== 'string' || !word)) fail('textEmphasis 只支持标题和落款的非空短语数组');
+  }
   const imageValue = background.image;
   if (typeof imageValue !== 'string') fail('背景 image 必须是字符串');
   // 占位档案兼容 V0.1 的 content.background；正式背景必须与元数据绑定，避免套错安全区。
@@ -136,19 +176,27 @@ export async function loadPresentation(configFile = DEFAULT_CONFIG, contentBackg
   const icon = await readFile(iconPath);
   css['--note-icon'] = `url("data:image/svg+xml;base64,${icon.toString('base64')}")`;
   const assets = { [path.relative(ROOT, iconPath)]: hash(icon) };
+  const icons = {};
+  for (const [key, relative] of Object.entries(design.icons)) {
+    if (!/^[a-z-]+$/.test(key)) fail('图标标识必须是英文字母或连字符');
+    const filename = await localFile(relative, 'assets/icons', ['.svg']);
+    const bytes = await readFile(filename);
+    assets[path.relative(ROOT, filename)] = hash(bytes);
+    icons[key] = `data:image/svg+xml;base64,${bytes.toString('base64')}`;
+  }
   if (image) assets[path.relative(ROOT, fileURLToPath(image))] = hash(await readFile(fileURLToPath(image)));
   if (background.status === 'confirmed' && contentBackground && !imageValue) fail('已确认背景档案不能套用未登记图片');
   for (const [relative, fingerprint] of Object.entries(assets)) verifySource(relative, fingerprint,
     relative.startsWith('assets/icons/') ? design.status === 'confirmed' : background.status === 'confirmed');
   if (issue.status === 'confirmed' && [design, layout, background].some(value => value.status !== 'confirmed')) fail('已确认的每期配置必须引用已确认的设计、布局和背景');
   return {
-    css, image, safeArea, visualFocus: background.visualFocus, warnings, verifySource,
+    css, image, icons, regions, textEmphasis, template: templates[layout.capability], safeAreas: background.safeAreas, avoidAreas, safeArea, visualFocus: background.visualFocus, warnings, verifySource,
     manifest: {
       schemaVersion: 1,
       issue: `${issue.id}@${issue.version}`, design: `${design.id}@${design.version}`, layout: layoutRef,
       background: `${background.id}@${background.version}`, statuses: { issue: issue.status, design: design.status, layout: layout.status, background: background.status },
       parameters: effective, safeArea, focalPoint: background.focalPoint, visualFocus: background.visualFocus,
-      designTokens: tokens, fonts: design.fonts, capability: layout.capability, sources, assets,
+      fit, regions, avoidAreas, textEmphasis, designTokens: tokens, fonts: design.fonts, capability: layout.capability, sources, assets,
     },
   };
 }

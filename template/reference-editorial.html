@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=1080, initial-scale=1">
+  <title>Pink Bloom · 参考编辑布局</title>
+  <link rel="stylesheet" href="../node_modules/@fontsource/noto-serif-sc/600.css">
+  <link rel="stylesheet" href="../node_modules/@fontsource/noto-serif-sc/400.css">
+  <link rel="stylesheet" href="reference-editorial.css">
+</head>
+<body>
+  <article id="card" aria-label="康复小纸条">
+    <img id="background" class="background" alt="" hidden>
+    <header class="masthead" data-region="栏目信息" data-safe-area="masthead" data-block>
+      <span class="column-leaf" aria-hidden="true"></span>
+      <div class="column-brand"><span id="column" data-region="栏目"></span><span id="brand-en" data-region="英文栏目名称"></span></div>
+      <span id="issue" data-region="期数"></span>
+      <span class="masthead-rule" aria-hidden="true"></span>
+      <p id="review-status" data-region="审核状态"></p>
+    </header>
+    <main class="surface" data-safe-area="main" data-layout="reference-editorial">
+      <h1 id="title" data-region="主标题" data-block></h1>
+      <div class="editorial-body">
+        <p id="introduction" data-region="引导语" data-block></p>
+        <ol id="points" data-region="知识点列表"></ol>
+      </div>
+    </main>
+    <aside id="reminder-box" data-region="提醒区域" data-safe-area="reminder" data-block>
+      <div class="reminder-symbol" aria-hidden="true"><img id="reminder-icon" alt=""></div>
+      <div class="reminder-copy"><p id="reminder-title" class="reminder-label" data-region="提醒标题"></p><p id="reminder" data-region="医学提醒"></p></div>
+    </aside>
+    <footer data-region="落款" data-safe-area="footer" data-block><p id="brand-cn" data-region="中文落款"></p></footer>
+  </article>
+</body>
+</html>

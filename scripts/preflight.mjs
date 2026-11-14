@@ -1,5 +1,5 @@
 // 此函数在 Chromium 中执行；只检查几何布局，不改写或重排内容。
-export function inspectLayout({ safeArea, visualFocus }) {
+export function inspectLayout({ safeArea, visualFocus, regions = {}, avoidAreas = [] }) {
   const errors = [];
   const seen = new Set();
   const add = (type, region, detail) => {
@@ -8,12 +8,14 @@ export function inspectLayout({ safeArea, visualFocus }) {
   };
   const tolerance = 1;
   const card = document.getElementById('card').getBoundingClientRect();
-  const safe = { left: card.left + safeArea.x, top: card.top + safeArea.y, right: card.left + safeArea.x + safeArea.width, bottom: card.top + safeArea.y + safeArea.height };
+  const bounds = area => ({ left: card.left + area.x, top: card.top + area.y, right: card.left + area.x + area.width, bottom: card.top + area.y + area.height });
   const outside = (a, b) => a.left < b.left - tolerance || a.right > b.right + tolerance || a.top < b.top - tolerance || a.bottom > b.bottom + tolerance;
   const intersects = (a, b) => Math.min(a.right, b.right) - Math.max(a.left, b.left) > tolerance && Math.min(a.bottom, b.bottom) - Math.max(a.top, b.top) > tolerance;
   const blocks = [...document.querySelectorAll('[data-block]')];
   for (const el of document.querySelectorAll('[data-region], .surface')) {
     const box = el.getBoundingClientRect();
+    const region = el.closest('[data-safe-area]')?.dataset.safeArea;
+    const safe = bounds(regions[region] || safeArea);
     const name = el.dataset.region || '卡片内容区';
     if (el.scrollWidth > el.clientWidth + tolerance || el.scrollHeight > el.clientHeight + tolerance) add('overflow', name, '文字溢出区域可用空间');
     if (outside(box, card)) add('crop', name, '区域超出画幅，会被裁切');
@@ -27,6 +29,7 @@ export function inspectLayout({ safeArea, visualFocus }) {
         if (outside(rect, box)) add('overflow', name, '真实文字边界溢出');
         if (outside(rect, card)) add('crop', name, '文字超出画幅');
         if (outside(rect, safe)) add('safe-area', name, '文字超出背景安全区');
+        for (const area of avoidAreas) if (intersects(rect, bounds(area))) add('background-conflict', name, `文字进入背景避让区 ${area.id || ''}`);
         let ancestor = walker.currentNode.parentElement;
         while (ancestor && ancestor !== document.body) {
           const style = getComputedStyle(ancestor);

@@ -7,7 +7,7 @@
 | 目录 | 责任 |
 | --- | --- |
 | `design/` | 品牌设计规范：字体、字重、字号层级、行高、颜色、线条、图标、基础间距 |
-| `layouts/` | 布局预设：能力名称和参数覆盖；目前仅实现 `editorial-flow` 标准纵向编辑能力 |
+| `layouts/` | 布局预设：能力名称和参数覆盖；包含 `editorial-flow` 默认纵向编辑与 `reference-editorial` 独立参考编辑能力 |
 | `backgrounds/` | 图片、文字安全区、视觉重心、裁切焦点及推荐布局 |
 | `issues/` | 为某期选择明确版本的设计、布局、背景与安全区，并覆盖日常排版参数 |
 
@@ -31,7 +31,7 @@
 
 `issue-demo-compact.v1.json` 演示同一纵向预设的配置变化：标题居中、正文 800px、间距改变、装饰变淡。它不是额外栏目，也不是另一套品牌设计。
 
-字体层级和色彩由设计 tokens 管理。本阶段安装宋体 Noto Serif SC 600、无衬线 Noto Sans SC 400/600；更换字体家族或增加字重属于新增视觉能力，需要同时配置本地字体资源和加载验证。
+字体层级和色彩由设计 tokens 管理。现有布局加载宋体 Noto Serif SC 400/600、无衬线 Noto Sans SC 400/600；更换字体家族或增加字重属于新增视觉能力，需要同时配置本地字体资源和加载验证。
 
 ## 背景档案
 
@@ -79,3 +79,17 @@ npm run render -- --input content/issue-demo.json --config config/issues/issue-d
 ## 后续扩展点
 
 同一布局能力可新增多个预设 JSON。需要新的编排能力时才修改 HTML/CSS 和 capability 校验，并保留旧版本。未来的规则或 AI 推荐器可读取背景元数据、文本长度与报告 metrics，输出一份新的 draft 配置供预览；当前不实现自动构图、自动选版或改写文案。
+
+## 第002期独立参考编辑布局
+
+本期通过 `config/issues/issue-002.v1.json` 选择新的 `reference-editorial@1`。它使用独立 HTML/CSS，不覆盖默认 `editorial-flow` 文件或配置。
+
+- `regions` 将 masthead/main/reminder/footer 绑定到背景的四个安全区；`safeArea` 仍指向 main。
+- `textEmphasis` 可指定 `title` 与 `brand_cn` 中已有的非空短语。渲染器仅包裹原文，不插入/替换文字；短语不存在或重叠时报错。
+- 背景 `fit` 可为 `contain` 或 `cover`，本期使用 contain 保留原图。`avoidAreas` 为多个背景装饰避让矩形，检查真实文字 Range 是否进入这些区域。
+- `parameters` 增加 titleWidth、introGap、pointsGap、pointIconSize、pointIconColumn、pointNumberWidth、pointColumnGap、pointTextGap、rowPadding、reminderRadius、reminderIconWidth、reminderPaddingX/Y；数值单位为 CSS px，范围由配置加载器校验。
+- 设计 tokens 增加 pointHeadingSize/LineHeight、numberColor、pointHeadingColor、brandPink、iconDiscColor、rowLineOpacity、iconDiscOpacity；SVG 由设计 icons 字典映射到本地资源。
+- 文案知识点使用 heading/body/icon 对象，增加 reminder_title。对象文本及顺序仍受完整性校验；旧字符串知识点继续由旧布局处理，不混用。
+- 已确认布局的源文件锁应登记所选模板 HTML/CSS，而不是一律登记默认模板；渲染器的 sourceHashes 会列出本次实际使用文件。
+
+本期所有布局/设计状态仍为 draft；背景原图由用户选定，构图标注与本期排版参数不视为已经视觉确认。参见 `docs/issues/issue-002.md`。
