@@ -1,0 +1,8 @@
+{
+  "id": "editorial-vertical",
+  "version": "1",
+  "status": "draft",
+  "description": "标准纵向编辑布局：各段落按真实高度依次流动，不预设文字区高度",
+  "capability": "editorial-flow",
+  "parameters": {}
+}

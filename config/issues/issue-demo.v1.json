@@ -1,0 +1,10 @@
+{
+  "id": "issue-demo",
+  "version": "1",
+  "status": "draft",
+  "design": "config/design/pink-bloom.v0.2.json",
+  "layout": "config/layouts/editorial-vertical.v1.json",
+  "background": "config/backgrounds/placeholder.v1.json",
+  "safeArea": "main",
+  "parameters": {}
+}

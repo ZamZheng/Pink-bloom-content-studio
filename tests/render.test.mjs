@@ -76,7 +76,10 @@ test('长标题、引导语、知识点、提醒和落款均拒绝溢出，不�
   ]) {
     await t.test(field, async () => fixture(async ({ input, output, save }) => {
       await save({ ...demo, [field]: value });
-      await assert.rejects(render({ input, output }), error => error.message.includes('文字溢出') && error.message.includes(region));
+      await assert.rejects(render({ input, output }), /排版检查失败.*文字溢出/);
+      const report = JSON.parse(await readFile(output.replace('.png', '.report.json'), 'utf8'));
+      assert.equal(report.contentIntegrity, true);
+      assert.ok(report.errors.some(error => ['overflow', 'crop', 'safe-area', 'clip'].includes(error.type)), region);
       await assert.rejects(access(output));
     }));
   }

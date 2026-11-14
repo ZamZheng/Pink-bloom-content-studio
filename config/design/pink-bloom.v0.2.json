@@ -1,0 +1,59 @@
+{
+  "id": "pink-bloom",
+  "version": "0.2",
+  "status": "draft",
+  "description": "工程占位设计规范，等待用户视觉母版确认",
+  "fonts": {
+    "heading": "Noto Serif SC",
+    "body": "Noto Sans SC"
+  },
+  "icons": {
+    "note": "assets/icons/note.svg"
+  },
+  "tokens": {
+    "colorInk": "#43383e",
+    "colorMuted": "#71656b",
+    "colorAccent": "#945769",
+    "colorLine": "#decbd1",
+    "colorPanel": "#fff8fa",
+    "colorSurface": "#ffffff",
+    "backgroundStart": "#fbf3f5",
+    "backgroundEnd": "#f2e7eb",
+    "titleSize": 56,
+    "introSize": 29,
+    "pointSize": 30,
+    "reminderSize": 25,
+    "metaSize": 24,
+    "brandSize": 25,
+    "smallSize": 19,
+    "labelSize": 20,
+    "numberSize": 22,
+    "titleLineHeight": 1.45,
+    "bodyLineHeight": 1.7,
+    "metaLineHeight": 1.6,
+    "radius": 24,
+    "lineWidth": 1,
+    "reminderLineWidth": 3,
+    "iconSize": 32,
+    "iconGap": 10,
+    "inlineGap": 18,
+    "numberWidth": 36,
+    "reminderPadding": 18,
+    "footerPadding": 16,
+    "statusGap": 12,
+    "headingWeight": 600,
+    "bodyWeight": 400,
+    "labelWeight": 600
+  },
+  "layoutDefaults": {
+    "panelPadding": 48,
+    "sectionGap": 24,
+    "pointGap": 22,
+    "titleOffsetTop": 0,
+    "titleAlign": "left",
+    "bodyWidth": 872,
+    "bodyAlign": "left",
+    "surfaceOpacity": 0.94,
+    "decorationOpacity": 1
+  }
+}

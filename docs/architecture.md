@@ -1,58 +1,80 @@
-# 工程说明与验收记录
+# 动态排版架构与验收记录
 
-## 范围与数据流
+## 目标与边界
 
-V0.1 是可重复执行的图片生产工具，无 HTTP 服务、前端构建框架、账号或数据库。
+本工程是患者康复知识卡片的图片生产工具，不是在线网站。固定的是 1080×1350 画幅与品牌规范，文字区的位置/高度由内容流、所选安全区和配置共同决定，不再逐段填入固定坐标槽。本阶段仅实现标准纵向编辑能力，不实现 AI 自动构图或自动选版。
 
 ```text
-content/*.json → 字段与本地背景校验 → file:// HTML/CSS
-              → textContent 注入 → 字体及图片就绪
-              → 区域溢出检查 → Chromium @2x PNG → output/
+content/*.json                       config/issues/*.json
+      │                             ├─ design（品牌 tokens）
+      │                             ├─ layout（布局预设）
+      │                             └─ background（图片、构图元数据）
+      └──────────────┬────────────────────────┘
+                 校验 / 参数合并 / 版本摘要验证
+                     ↓
+           本地 HTML/CSS + 原文 DOM 注入
+                     ↓
+       字体/图片就绪 + 文字内容逐项完整性核对
+                     ↓
+            几何检查 → 预览 HTML + JSON 报告
+                     ↓ 检查通过
+                Chromium @2x PNG
 ```
 
-仓库根目录由 `import.meta.url` 定位；背景路径相对仓库根目录，输入/输出 CLI 路径相对当前工作目录。编号 `1` / `01` 至 `5` / `05` 对应背景目录中的 `01.png` 至 `05.png`。正式图片尚未导入，默认使用纯 CSS 渐变。
+## 文件责任
 
-## 实现约定
+- `scripts/config.mjs`：读取版本化配置、校验类型/范围与资源路径、合并参数为 CSS 变量、验证已确认文件摘要。
+- `scripts/render.mjs`：读取内容、原文注入、资源等待、完整性校验、生成预览/报告和 PNG、CLI 错误处理。
+- `scripts/preflight.mjs`：在浏览器中检查真实 DOM 几何关系并返回错误与区块 metrics。
+- `template/index.html`：独立语义元素，正文组保持引导语→知识点→提醒顺序，不把内容绑定到固定槽。
+- `template/style.css`：标准纵向 flex 内容流；设计 tokens 和排版参数由独立 JSON 注入，不含每期文案。
+- `config/`：统一设计规范、布局预设、背景构图、每期参数和确认版本锁。详细字段与使用方式见 `config/README.md`。
 
-- 必填字段和 `points` 类型由脚本校验，错误退出码为 1。
-- JSON 文字通过 DOM `textContent` 注入，不拼接 HTML。
-- 背景路径经过真实路径解析，仅允许背景目录内的 PNG/JPEG/WebP，浏览器阻断 HTTP(S) 请求。
-- 本地 CSS 引入锁定 npm 字体包，不依赖系统中文字体。等待 `document.fonts.ready`、字体状态和所有可见图片的 `decode()`，资源失败即停止。
-- 标题、引导语、知识点、提醒、落款均为独立元素。CSS 固定区域，不缩小字号。
-- 溢出检测同时比较 `scrollWidth/scrollHeight`、元素相对画幅的边界和文字 Range 相对区域的边界（1 CSS px 舍入容差）。超出时列出区域，交由编辑改写或经用户确认改版。
-- 导出前通过 Chromium DevTools 读取标题、引导语及知识点的实际字体，随日志返回；测试对中文标题和正文的本地 Noto 字体作断言。
-- PNG 截图范围为卡片元素，固定 1080×1350，`deviceScaleFactor: 2`。检查 PNG IHDR 必须为 2160×2700 后，再通过同目录临时文件原子替换目标输出。失败不覆盖已有成功图片。
-- 所有审核状态只反映输入。V0.1 不验证审核人员身份，也不作为正式发布审批系统；人工专业审核责任保留给内容流程。
+参数优先级为 design.layoutDefaults → layout.parameters → issue.parameters。新增预设可复用 `editorial-flow` 能力；新增视觉能力才修改 HTML/CSS 与能力校验。未知能力与参数会显式失败，不静默退回其他版式。
 
-## 版式版本记录
+## 背景与内容完整性
 
-| 版本 | 状态 | 说明 |
+背景作为独立图层，图片/图标使用仓库相对路径，不依赖外部 CDN。背景档案的矩形坐标基于完成 cover 裁切后的目标画幅；`focalPoint` 控制裁切焦点，`visualFocus` 标记应避开的视觉重心，`safeAreas` 提供可选文字区。
+
+为保持 V0.1 兼容，占位档案允许 content.background 选择图片但会警告安全区未确认；正式背景档案绑定图片，防止背景与构图元数据错配。当前不自动理解图片中的人脸、纹理或语义，也不自动计算对比度。
+
+渲染器不改写、重排、截断文案，不自动缩小字号。注入后逐字段比对 DOM 与输入，对知识点数组逐项保序。医学审核状态仅照录输入，与视觉 confirmed 独立。
+
+## 预览与几何检查
+
+单独 preview 不生成 PNG；render 在正式导出前也保存预览和检查报告。预览使用当前 DOM 与 CSS 快照，附辅助线与报告；本地字体/图片仍引用当前仓库路径，无需 HTTP 服务，新环境可重新安装后生成。
+
+检查覆盖 `scrollWidth/scrollHeight`、真实文字 Range 边界、画幅边界、祖先 overflow 裁切、非父子内容块矩形相交、安全区与视觉重心冲突。舍入容差为 1 CSS px。文字块无法容纳时保留预览和报告，退出码为 1，不覆盖已有 PNG。流式布局可能由长段落把后续区块推出安全区，报告会显示整体溢出及受影响区块，而不是把每段约束为固定高度。
+
+PNG 检查 IHDR 必须是 2160×2700，再写入同目录临时文件并原子替换。辅助线和诊断侧栏只存在于预览，不进入 PNG。检查失败或未完成字体/图片加载时不得报导出成功。
+
+## 版本保护
+
+所有配置有 id/version/status，目前均为 draft。确认后的配置及资产按 `versions.lock.json` 登记 SHA-256；加载时验证，不允许原地覆盖。已确认布局还必须锁定模板、渲染相关代码与依赖锁文件，阻止未来代码变化默默影响原版。需新能力时保留对应 Git 提交并新增版本重新验收。
+
+报告记录配置/资产/模板/代码/lockfile 摘要、有效参数、设计 tokens、内容哈希、审核状态和区块 metrics。报告用于追溯，源文件历史由 Git 保存；不把“有版本号”当作已经用户确认。当前不新增确认流程或自动确认操作。
+
+| 版本 | 状态 | 变更原因 |
 | --- | --- | --- |
-| V0.1 | 工程测试占位，未作为品牌母版确认 | 建立固定画幅、独立文字层、资源分离、高清输出及溢出检测 |
-
-下一阶段用户确认视觉母版后再修改模板；每次更改需保留 Git 提交，并更新本表。当前不自动连接 Notion 或增加其他栏目。
-
-## 可重复安装与运行
-
-依赖由 `package-lock.json` 锁定，浏览器版本由 Playwright 版本确定。新云任务执行 README 的 `npm ci`、`npm run setup:browser`、渲染命令和 `npm test`，不依赖本次临时文件。中文字体可从锁定依赖重新安装；浏览器缓存可由安装命令重新创建。Linux 系统共享库是环境前置条件，缺失时按 README 安装并报告实际权限或网络限制。
+| V0.1（939b9e7） | 历史工程占位 | 初始化 JSON → HTML/CSS → 高清 PNG，固定分区验证基础能力 |
+| V0.2 | 工程占位，待用户视觉母版确认 | 按新要求引入版本化设计系统、自然内容流、配置预设、背景元数据、预览与几何检查；保留 V0.1 Git 历史 |
 
 ## 实际验收
 
-验收环境：Codex Cloud Linux，Node.js v24.22.1，npm 11.9.0，Playwright 1.65.1，配套 Chromium 159.0.8154.6。
+环境：Codex Cloud Linux，Node.js v24.22.1，npm 11.9.0，Playwright 1.65.1，配套 Chromium 159.0.8154.6。中文字体从 lockfile 所锁定的 Fontsource Noto SC 包加载。系统共享库满足要求，没有另外执行系统依赖安装。
 
-验收日期：2026-11-14（Asia/Shanghai）。以下均在本次云环境实际执行：
+验收日期：2026-11-14（Asia/Shanghai）。V0.1 原有 10 项测试已保留并适配流式布局；V0.2 实际执行：
 
 | 命令 / 检查 | 结果 |
 | --- | --- |
-| `npm install --no-fund --no-audit` | 初始化安装成功，生成 lockfile |
-| `npm ci` | 从 lockfile 重新安装成功，4 个依赖包 |
-| `npm run setup:browser` | 首次成功下载配套 Chromium、Headless Shell 与 FFmpeg；重新执行成功 |
-| `npm test` | 10 项通过，0 失败（包含 5 项独立溢出子测试） |
-| `npm run render -- --input content/issue-demo.json --output output/issue-demo.png` | 成功读取 JSON、渲染 HTML 并导出 PNG，状态保留为 draft |
-| `file output/issue-demo.png` | PNG，2160×2700，8-bit RGB |
-| 实际浏览器字体及图片目视检查 | 标题为本地 Noto Serif SC，正文为本地 Noto Sans SC；中文正常，无乱码或缺字 |
-| JSON 更新与背景替换 | 图像内容变化，HTML 文件保持一致；错误路径与损坏图片被拒绝 |
-| 溢出与失败处理 | 标题、引导语、知识点、提醒及落款过长均阻止输出；已有成功图片不被失败任务覆盖 |
-| Git 忽略规则 | 已确认 PNG 输出及 node_modules 被忽略 |
+| `npm ci` | 按 lockfile 重新安装成功，依赖仍为 4 个包 |
+| `npm run setup:browser` | 成功；使用配套 Chromium，没有新增系统依赖安装 |
+| `npm test` | 17 项通过、0 失败，包含原有导出/中文字体/背景/长文检测与新增配置、内容流、预览、几何检查、版本锁测试 |
+| `npm run preview -- --input content/issue-demo.json --output output/issue-demo.html` | 成功生成本地预览和报告，检查通过 |
+| `npm run render -- --input content/issue-demo.json --output output/issue-demo.png` | 标准配置导出成功，2160×2700 |
+| `npm run render -- --input content/issue-demo.json --config config/issues/issue-demo-compact.v1.json --output output/compact.png` | 仅改配置的变体导出成功，2160×2700 |
+| 预览打开与目视检查 | 浏览器能打开生成的 HTML，字体资源无加载失败；PNG 中文正常，变体标题居中、正文变窄、间距和装饰透明度变化 |
+| 版本保护隔离测试 | 已登记摘要的文件修改后实际拒绝加载，即使仍声明 draft 也不能绕过 |
+| 失败处理 | 预览与报告可保留，正式 PNG 不被失败任务覆盖；医学文案逐字保序 |
 
-当前系统库满足运行要求，无需执行 `setup:browser:deps`；未把未执行的系统依赖安装计为成功。没有遇到 npm、浏览器下载或 Git 读取的网络限制。测试只验证排版工程，不代表医学审核或最终视觉确认。
+未引入新依赖、外部图片/字体 CDN 或 AI 服务。背景图像语义分析和最终品牌视觉确认仍不属于本阶段。

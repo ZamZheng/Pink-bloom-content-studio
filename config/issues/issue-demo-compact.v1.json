@@ -1,0 +1,18 @@
+{
+  "id": "issue-demo-compact",
+  "version": "1",
+  "status": "draft",
+  "design": "config/design/pink-bloom.v0.2.json",
+  "layout": "config/layouts/editorial-vertical.v1.json",
+  "background": "config/backgrounds/placeholder.v1.json",
+  "safeArea": "main",
+  "parameters": {
+    "titleOffsetTop": 10,
+    "titleAlign": "center",
+    "bodyWidth": 800,
+    "bodyAlign": "center",
+    "sectionGap": 20,
+    "pointGap": 14,
+    "decorationOpacity": 0.5
+  }
+}

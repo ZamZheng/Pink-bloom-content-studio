@@ -1,0 +1,11 @@
+{
+  "id": "placeholder",
+  "version": "1",
+  "status": "draft",
+  "image": "",
+  "canvas": { "width": 1080, "height": 1350 },
+  "safeAreas": [ { "id": "main", "x": 56, "y": 56, "width": 968, "height": 1238 } ],
+  "focalPoint": { "x": 0.5, "y": 0.5 },
+  "visualFocus": null,
+  "recommendedLayouts": [ "editorial-vertical@1" ]
+}
