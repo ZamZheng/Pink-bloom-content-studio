@@ -98,3 +98,46 @@ test('新增分区检查可允许独立落款并捕获背景避让冲突', async
     assert.ok(bad.errors.some(error => error.type === 'background-conflict'));
   } finally { await browser.close(); }
 });
+
+test('002 v2 字体分工正确，正文与提醒保持旧版规格，医学内容不变', async () => temporary(async directory => {
+  const result = await render({ input, config: path.join(ROOT, 'config/issues/issue-002.v2.json'), output: path.join(directory, 'issue-002-v2.png') });
+  assert.equal(result.width, 2160); assert.equal(result.height, 2700);
+  assert.equal(result.review_status, 'pending_review');
+  const report = JSON.parse(await readFile(result.report, 'utf8'));
+  assert.equal(report.ok, true); assert.deepEqual(report.errors, []); assert.deepEqual(report.warnings, []);
+  assert.equal(report.contentIntegrity, true);
+  assert.equal(report.presentation.templateVariant, 'typography-v2');
+  assert.equal(report.presentation.displayReviewStatus, false);
+  for (const [selector, family] of [['#title', 'Noto Sans SC'], ['#brand-cn', 'Noto Sans SC'], ['.point-heading', 'Noto Serif SC'], ['.point-copy', 'Noto Serif SC']]) {
+    assert.ok(result.fonts[selector].length > 0);
+    assert.ok(result.fonts[selector].every(font => font.isCustomFont && font.familyName.startsWith(family)));
+  }
+  const browser = await chromium.launch();
+  try {
+    const page = await browser.newPage();
+    const failures = []; page.on('requestfailed', request => failures.push(request.url()));
+    await page.goto(pathToFileURL(result.preview).href);
+    await page.evaluate(() => document.fonts.ready);
+    const styles = await page.evaluate(() => {
+      const read = selector => {
+        const s = getComputedStyle(document.querySelector(selector));
+        return { font: s.fontFamily.split(',')[0].replaceAll('"', ''), weight: s.fontWeight, size: s.fontSize, color: s.color, lineHeight: s.lineHeight };
+      };
+      return { title: read('#title'), intro: read('#introduction'), pointHeadings: [...document.querySelectorAll('.point-heading')].map(el => read(`#points .point:nth-child(${[...el.closest('ol').children].indexOf(el.closest('li')) + 1}) .point-heading`)), body: read('.point-copy'), reminder: read('#reminder'), reminderHeading: read('#reminder-title'), brand: read('#brand-cn'), loadedWeights: [...document.fonts].filter(face => face.status === 'loaded' && face.family.includes('Noto Serif SC')).map(face => face.weight) };
+    });
+    assert.equal(styles.title.font, 'Noto Sans SC'); assert.equal(styles.title.weight, '600'); assert.equal(styles.title.size, '64px');
+    assert.equal(styles.intro.size, '25px'); assert.equal(styles.intro.color, 'rgb(132, 122, 112)');
+    for (const heading of styles.pointHeadings) { assert.equal(heading.weight, '700'); assert.equal(heading.size, '32px'); assert.equal(heading.color, 'rgb(101, 112, 79)'); }
+    assert.ok(styles.loadedWeights.includes('700'), '需要真正加载700字重，不使用伪粗体');
+    assert.deepEqual(styles.body, { font: 'Noto Serif SC', weight: '400', size: '24px', color: 'rgb(81, 72, 63)', lineHeight: '36px' });
+    assert.equal(styles.reminder.size, '23px'); assert.equal(styles.reminder.weight, '400');
+    assert.equal(styles.reminderHeading.weight, '600'); assert.equal(styles.reminderHeading.color, 'rgb(84, 99, 57)');
+    assert.equal(styles.brand.font, 'Noto Sans SC'); assert.equal(styles.brand.weight, '400'); assert.equal(styles.brand.size, '26px');
+    assert.equal(await page.locator('#title').textContent(), issue.title);
+    assert.equal(await page.locator('#review-status').count(), 0, '新版图面不包含审核提示字样');
+    assert.deepEqual(await page.locator('.point-copy').allTextContents(), expectedBodies);
+    assert.equal(await page.locator('#reminder').textContent(), issue.reminder);
+    assert.equal(await page.locator('#brand-cn .text-emphasis').textContent(), '粉红');
+    assert.deepEqual(failures, []);
+  } finally { await browser.close(); }
+}));

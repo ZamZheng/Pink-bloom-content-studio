@@ -112,3 +112,7 @@ npm run render -- --input content/issue-002.json --config config/issues/issue-00
 本期文案为用户提供的完整稿，`review_status: "pending_review"`。背景原文件已进入仓库，无需运行时重新下载。参考编辑布局支持知识点图标、小标题/说明、标题关键词与落款局部颜色、独立提醒和右下落款。原默认 HTML/CSS 保持不变，日常参数调整使用本期 JSON 配置。
 
 详见 [第002期制作与验收记录](docs/issues/issue-002.md)。
+
+## 当前暂停存档：第002期 v2
+
+用户已选定字体微调后的第002期 v2，并要求图面移除审核提示。高清图片与对应报告保存在 `deliverables/issue-002-v2.png` 和 `.report.json`；该单张选定图片随 Git 存档，其他测试输出继续忽略。视觉参数仅确认到本期，内部医学状态保留 pending_review，不覆盖栏目默认样式。恢复说明见 [暂停存档](docs/checkpoints/issue-002-v2.md)。

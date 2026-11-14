@@ -1,4 +1,22 @@
 {
   "schemaVersion": 1,
-  "files": {}
+  "files": {
+    "assets/backgrounds/issue-002.png": "ff1693b73ae00fd6ccd234aa998ff935a3365df4ce52b5fff88a37b2db80c484",
+    "assets/icons/calendar.svg": "497ac75288cc126d310371c0c0f0ccf0b8ae3f24159736d42aa59cc9c6d4f9a1",
+    "assets/icons/clock.svg": "080e84739d072ea94de1731b32a33fdb4e7a22ac348800b6c8544148f0645555",
+    "assets/icons/leaf.svg": "b16c78de76b4b12acd3272dd5dc53ce487f787af756a72ee12d711ae3b5c98cd",
+    "assets/icons/notebook.svg": "2dba668a28207d92d1e7053fbc33681364ef73041aa455a4e9ef4b393b46cb0a",
+    "assets/icons/shield.svg": "4b7bf62c693881d5a6a3fc6ac4a58890f9013175afe7937bef405c88dd7baa62",
+    "assets/icons/walk.svg": "5266a7d9c06ed91db5be7377164794e06b1dba97d7ea3b3e879bd1493351106a",
+    "config/backgrounds/issue-002.v2.json": "2aa3bae7dffa09a959848a2671b7106217763bafc4836e0d7aee1b45b3ae1bec",
+    "config/design/issue-002.v2.json": "3cf8f06d64f147a5aa7498db0dd00de5423c76e10169f9e30a642bc0d8987cef",
+    "config/issues/issue-002.v2.json": "e87c6af1a2f7dc892f2c89b368bb6dfe045e293a97b4c59d98d43fe1f687b325",
+    "config/layouts/reference-editorial.v2.json": "7948716092bc3782e7ba97d3f09c54515d8e6569fda220deaa4bf1ae52955445",
+    "package-lock.json": "df42e86171cd3eabc0a01457e3ff7f4b234458a495d953d51726610a56fbbf3e",
+    "scripts/config.mjs": "a4dcbf9c528f9078f5d62df7d504ed8807cfb91fa9320cffde8fdafd602d0236",
+    "scripts/preflight.mjs": "9e055212fc0b38aaf1776dc2e7b6a524d54298c099206ecd70549d994a1d2d17",
+    "scripts/render.mjs": "a371de8126b3f559c04c423ded8cb4d776d9dc858706ddcdf38de05c16712487",
+    "template/reference-editorial.v2.css": "44dd7ba2ac0d5362b812343c526ef24e3988a7d6d529b32f73029e29e0bfd159",
+    "template/reference-editorial.v2.html": "541097709e91c800f53fa2ee962fd5e72c8a7fcf27617d2e9b6f6774016aeec8"
+  }
 }

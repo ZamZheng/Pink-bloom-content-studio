@@ -93,3 +93,9 @@ npm run render -- --input content/issue-demo.json --config config/issues/issue-d
 - 已确认布局的源文件锁应登记所选模板 HTML/CSS，而不是一律登记默认模板；渲染器的 sourceHashes 会列出本次实际使用文件。
 
 本期所有布局/设计状态仍为 draft；背景原图由用户选定，构图标注与本期排版参数不视为已经视觉确认。参见 `docs/issues/issue-002.md`。
+
+## 第002期 v2 字体变体与图面标识
+
+`reference-editorial@2` 使用 `templateVariant: "typography-v2"`，加载独立的 v2 HTML/CSS。设计 fonts 增加 pointHeading/brand；tokens 增加 pointHeadingWeight、brandWeight、introColor 和 reminderHeadingColor，字体角色不影响正文或提醒原有字重。所有字体由现有 Noto SC 开源包本地加载，未增加依赖。
+
+每期配置可设置 `displayReviewStatus: false`，只移除图面审核标识，不更改内容数据或报告的 review_status；省略时保留旧行为。用户已确定第002期 v2 并暂停，四份v2视觉配置与其依赖登记到版本锁，旧版和栏目默认样式不覆盖。后续操作先读 docs/checkpoints/issue-002-v2.md。

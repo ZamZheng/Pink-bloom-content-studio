@@ -45,6 +45,9 @@ const templates = {
   'editorial-flow': { html: 'template/index.html', css: 'template/style.css' },
   'reference-editorial': { html: 'template/reference-editorial.html', css: 'template/reference-editorial.css' },
 };
+const referenceVariants = {
+  'typography-v2': { html: 'template/reference-editorial.v2.html', css: 'template/reference-editorial.v2.css' },
+};
 function checkParameters(value, complete = false, capability = 'editorial-flow') {
   const schema = capability === 'reference-editorial' ? { ...parameters, ...referenceParameters } : parameters;
   if (!plain(value)) fail('parameters 必须为对象');
@@ -63,6 +66,8 @@ const lineTokens = ['titleLineHeight', 'bodyLineHeight', 'metaLineHeight'];
 const extraSizes = ['pointHeadingSize'];
 const extraLines = ['pointHeadingLineHeight'];
 const extraColors = ['numberColor', 'pointHeadingColor', 'brandPink', 'iconDiscColor'];
+const typographyColors = ['introColor', 'reminderHeadingColor'];
+const typographyWeights = { pointHeadingWeight: [600, 700], brandWeight: [400, 500] };
 const extraRatios = ['rowLineOpacity', 'iconDiscOpacity'];
 const weightTokens = { headingWeight: [600], bodyWeight: [400], labelWeight: [600] };
 const colorTokens = ['colorInk', 'colorMuted', 'colorAccent', 'colorLine', 'colorPanel', 'colorSurface', 'backgroundStart', 'backgroundEnd'];
@@ -91,14 +96,26 @@ export async function loadPresentation(configFile = DEFAULT_CONFIG, contentBackg
   const layout = await readReference(issue.layout);
   const background = await readReference(issue.background);
   if (!Object.hasOwn(templates, layout.capability)) fail(`尚未实现布局能力：${layout.capability}；新增能力才需要修改 HTML/CSS`);
-  if (design.fonts?.heading !== 'Noto Serif SC' || !['Noto Sans SC', 'Noto Serif SC'].includes(design.fonts?.body)) fail('字体必须使用已安装的 Noto Serif SC / Noto Sans SC');
+  const typographyV2 = layout.capability === 'reference-editorial' && layout.templateVariant === 'typography-v2';
+  if (layout.templateVariant !== undefined && !typographyV2) fail(`未实现模板变体：${layout.templateVariant}`);
+  const template = typographyV2 ? referenceVariants[layout.templateVariant] : templates[layout.capability];
+  const fontFamilies = ['Noto Sans SC', 'Noto Serif SC'];
+  const headingFamilies = typographyV2 ? fontFamilies : ['Noto Serif SC'];
+  if (!headingFamilies.includes(design.fonts?.heading) || !fontFamilies.includes(design.fonts?.body)) fail('字体必须使用布局已支持的 Noto Serif SC / Noto Sans SC');
+  if (typographyV2 && (!fontFamilies.includes(design.fonts.pointHeading) || !fontFamilies.includes(design.fonts.brand))) fail('字体微调变体需要支持的 pointHeading / brand 字体');
   if (!plain(design.tokens)) fail('缺少设计 tokens');
   const tokens = design.tokens;
-  for (const key of Object.keys(tokens)) if (![...sizeTokens, ...pixelTokens, ...lineTokens, ...colorTokens, ...extraSizes, ...extraLines, ...extraColors, ...extraRatios, ...Object.keys(weightTokens)].includes(key)) fail(`未知设计 token：${key}`);
+  const variantColors = typographyV2 ? typographyColors : [];
+  const variantWeights = typographyV2 ? typographyWeights : {};
+  for (const key of Object.keys(tokens)) if (![...sizeTokens, ...pixelTokens, ...lineTokens, ...colorTokens, ...extraSizes, ...extraLines, ...extraColors, ...extraRatios, ...Object.keys(weightTokens), ...variantColors, ...Object.keys(variantWeights)].includes(key)) fail(`未知设计 token：${key}`);
   const css = {};
   css['--font-heading'] = `"${design.fonts.heading}", serif`;
   css['--font-body'] = `"${design.fonts.body}", sans-serif`;
-  for (const [key, allowed] of Object.entries(weightTokens)) {
+  if (typographyV2) {
+    css['--font-point-heading'] = `"${design.fonts.pointHeading}", serif`;
+    css['--font-brand'] = `"${design.fonts.brand}", sans-serif`;
+  }
+  for (const [key, allowed] of Object.entries({ ...weightTokens, ...variantWeights })) {
     if (!allowed.includes(tokens[key])) fail(`${key} 必须使用已安装字重 ${allowed.join('/')}`);
     css[`--${kebab(key)}`] = String(tokens[key]);
   }
@@ -107,7 +124,7 @@ export async function loadPresentation(configFile = DEFAULT_CONFIG, contentBackg
     css[`--${kebab(key)}`] = `${tokens[key]}px`;
   }
   for (const key of [...lineTokens, ...extraLines.filter(key => Object.hasOwn(tokens, key))]) { number(tokens[key], 1.35, 2.5, key); css[`--${kebab(key)}`] = String(tokens[key]); }
-  for (const key of [...colorTokens, ...extraColors.filter(key => Object.hasOwn(tokens, key))]) {
+  for (const key of [...colorTokens, ...extraColors.filter(key => Object.hasOwn(tokens, key)), ...variantColors]) {
     if (typeof tokens[key] !== 'string' || !/^#[a-f\d]{6}$/i.test(tokens[key])) fail(`${key} 必须为六位十六进制颜色`);
     css[`--${kebab(key)}`] = tokens[key];
   }
@@ -159,6 +176,8 @@ export async function loadPresentation(configFile = DEFAULT_CONFIG, contentBackg
   if (!['contain', 'cover'].includes(fit)) fail('背景 fit 只允许 contain / cover');
   css['--background-fit'] = fit;
   const textEmphasis = issue.textEmphasis || {};
+  if (issue.displayReviewStatus !== undefined && typeof issue.displayReviewStatus !== 'boolean') fail('displayReviewStatus 必须是布尔值');
+  const displayReviewStatus = issue.displayReviewStatus ?? true;
   if (!plain(textEmphasis)) fail('textEmphasis 必须是对象');
   for (const [key, words] of Object.entries(textEmphasis)) {
     if (!['title', 'brand_cn'].includes(key) || !Array.isArray(words) || words.some(word => typeof word !== 'string' || !word)) fail('textEmphasis 只支持标题和落款的非空短语数组');
@@ -190,13 +209,13 @@ export async function loadPresentation(configFile = DEFAULT_CONFIG, contentBackg
     relative.startsWith('assets/icons/') ? design.status === 'confirmed' : background.status === 'confirmed');
   if (issue.status === 'confirmed' && [design, layout, background].some(value => value.status !== 'confirmed')) fail('已确认的每期配置必须引用已确认的设计、布局和背景');
   return {
-    css, image, icons, regions, textEmphasis, template: templates[layout.capability], safeAreas: background.safeAreas, avoidAreas, safeArea, visualFocus: background.visualFocus, warnings, verifySource,
+    css, image, icons, regions, textEmphasis, displayReviewStatus, template, safeAreas: background.safeAreas, avoidAreas, safeArea, visualFocus: background.visualFocus, warnings, verifySource,
     manifest: {
       schemaVersion: 1,
       issue: `${issue.id}@${issue.version}`, design: `${design.id}@${design.version}`, layout: layoutRef,
       background: `${background.id}@${background.version}`, statuses: { issue: issue.status, design: design.status, layout: layout.status, background: background.status },
       parameters: effective, safeArea, focalPoint: background.focalPoint, visualFocus: background.visualFocus,
-      fit, regions, avoidAreas, textEmphasis, designTokens: tokens, fonts: design.fonts, capability: layout.capability, sources, assets,
+      fit, regions, avoidAreas, textEmphasis, displayReviewStatus, designTokens: tokens, fonts: design.fonts, capability: layout.capability, templateVariant: layout.templateVariant || null, sources, assets,
     },
   };
 }

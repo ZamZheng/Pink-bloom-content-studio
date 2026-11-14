@@ -1,0 +1,47 @@
+/* 第002期字体微调变体；原参考编辑布局 v1 与默认模板保持不变。 */
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+p, h1 { margin: 0; }
+body { font-family: var(--font-body); font-weight: var(--body-weight); color: var(--color-ink); }
+#card { position: relative; width: 1080px; height: 1350px; overflow: hidden; background: var(--background-start); }
+.background { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: var(--background-fit); object-position: var(--focus-x) var(--focus-y); }
+[hidden] { display: none !important; }
+[data-region] { min-width: 0; min-height: 0; overflow-wrap: anywhere; }
+#title, #introduction, .point-heading, .point-copy, #reminder, #brand-cn { white-space: pre-wrap; }
+.masthead { position: absolute; left: var(--region-masthead-x); top: var(--region-masthead-y); width: var(--region-masthead-width); height: var(--region-masthead-height); display: flex; align-items: flex-start; gap: var(--inline-gap); color: var(--color-ink); }
+.column-leaf { width: var(--icon-size); height: var(--icon-size); margin-top: 3px; flex-shrink: 0; background: var(--color-accent); mask: var(--note-icon) center / contain no-repeat; opacity: var(--decoration-opacity); }
+.column-brand { display: flex; flex-direction: column; gap: 3px; flex-shrink: 0; }
+#column { font-size: var(--meta-size); font-weight: 600; line-height: var(--meta-line-height); letter-spacing: 2px; }
+#brand-en { font-size: var(--small-size); letter-spacing: 5px; color: var(--brand-pink); line-height: 1.4; }
+#issue { font-size: var(--meta-size); line-height: var(--meta-line-height); padding-left: var(--inline-gap); border-left: 1px solid var(--color-line); white-space: nowrap; }
+.masthead-rule { flex: 1; border-top: 1px solid var(--color-line); margin-top: 23px; opacity: var(--decoration-opacity); }
+#review-status { position: absolute; top: 58px; left: 0; font-size: 14px; line-height: 1.6; color: var(--color-muted); letter-spacing: 1px; }
+.surface { position: absolute; left: var(--safe-x); top: var(--safe-y); width: var(--safe-width); height: var(--safe-height); padding: var(--panel-padding); isolation: isolate; display: flex; flex-direction: column; }
+.surface > * { flex-shrink: 0; }
+#title { width: var(--title-width); max-width: 100%; font-family: var(--font-heading); font-size: var(--title-size); font-weight: var(--heading-weight); line-height: var(--title-line-height); margin-top: var(--title-offset-top); text-align: var(--title-align); letter-spacing: 1px; }
+.text-emphasis { color: var(--color-accent); }
+.editorial-body { display: flex; flex-direction: column; width: var(--body-width); max-width: 100%; margin-top: var(--intro-gap); }
+#introduction { font-size: var(--intro-size); line-height: var(--body-line-height); color: var(--intro-color); }
+#points { display: flex; flex-direction: column; gap: var(--point-gap); list-style: none; margin: var(--points-gap) 0 0; padding: 0; }
+.point { display: grid; grid-template-columns: var(--point-icon-column) var(--point-number-width) minmax(0, 1fr); column-gap: var(--point-column-gap); padding: var(--row-padding) 0; align-items: center; flex-shrink: 0; }
+.point + .point { border-top: var(--line-width) solid color-mix(in srgb, var(--color-line) calc(var(--row-line-opacity) * 100%), transparent); }
+.point-disc { width: var(--point-icon-size); height: var(--point-icon-size); border-radius: 50%; display: grid; place-items: center; justify-self: center; background: color-mix(in srgb, var(--icon-disc-color) calc(var(--icon-disc-opacity) * 100%), transparent); }
+.point-icon { width: 54%; height: 54%; opacity: var(--decoration-opacity); }
+.point-number { position: relative; align-self: start; margin-top: 8px; font-size: var(--number-size); line-height: 1.4; font-weight: 400; color: var(--number-color); }
+.point-number::before { content: ""; position: absolute; left: calc(var(--point-column-gap) / -2); top: 6px; height: 68px; border-left: 1px solid var(--color-line); opacity: var(--decoration-opacity); }
+.point-text { min-width: 0; display: flex; flex-direction: column; gap: var(--point-text-gap); }
+.point-heading { display: block; font-family: var(--font-point-heading); font-size: var(--point-heading-size); font-weight: var(--point-heading-weight); line-height: var(--point-heading-line-height); color: var(--point-heading-color); }
+.point-copy { display: block; font-size: var(--point-size); line-height: var(--body-line-height); color: var(--color-ink); }
+#reminder-box { position: absolute; left: var(--region-reminder-x); top: var(--region-reminder-y); width: var(--region-reminder-width); min-height: var(--region-reminder-height); display: grid; grid-template-columns: var(--reminder-icon-width) minmax(0, 1fr); align-items: center; gap: var(--inline-gap); padding: var(--reminder-padding-y) var(--reminder-padding-x); background: color-mix(in srgb, var(--color-panel) 86%, transparent); border-radius: var(--reminder-radius); }
+.reminder-symbol { display: flex; justify-content: center; border-right: 1px solid var(--color-line); }
+#reminder-icon { width: 58px; height: 68px; opacity: var(--decoration-opacity); }
+.reminder-label { font-size: var(--label-size); font-weight: var(--label-weight); line-height: var(--meta-line-height); color: var(--reminder-heading-color); margin-bottom: var(--point-text-gap); }
+#reminder { font-size: var(--reminder-size); line-height: var(--body-line-height); }
+footer { position: absolute; left: var(--region-footer-x); top: var(--region-footer-y); width: var(--region-footer-width); }
+#brand-cn { font-family: var(--font-brand); font-weight: var(--brand-weight); font-size: var(--brand-size); line-height: var(--meta-line-height); text-align: right; color: var(--color-ink); }
+#brand-cn .text-emphasis { color: var(--brand-pink); }
+.editorial-body[data-align="left"] { align-self: flex-start; }
+.editorial-body[data-align="center"] { align-self: center; }
+.editorial-body[data-align="right"] { align-self: flex-end; }
+
+.surface::before { content: ""; position: absolute; inset: 0; border-radius: var(--radius); background: var(--color-surface); opacity: var(--surface-opacity); z-index: -1; }

@@ -69,7 +69,7 @@ async function produce({ input, output, config }, previewOnly) {
     const response = await page.goto(pathToFileURL(path.join(ROOT, presentation.template.html)).href, { waitUntil: 'load' });
     if (response && !response.ok()) throw new Error(`模板加载失败：${response.status()}`);
     await page.addStyleTag({ content: `:root {${Object.entries(presentation.css).map(([key, value]) => `${key}:${value};`).join('')}}` });
-    await page.evaluate(({ data, background, status, parameters, structured, icons, textEmphasis }) => {
+    await page.evaluate(({ data, background, status, parameters, structured, icons, textEmphasis, displayReviewStatus }) => {
       function fillText(el, value, words = []) {
         el.textContent = '';
         let cursor = 0;
@@ -93,7 +93,9 @@ async function produce({ input, output, config }, previewOnly) {
         document.getElementById('reminder-title').textContent = data.reminder_title;
         document.getElementById('reminder-icon').src = icons.shield;
       }
-      document.getElementById('review-status').textContent = status;
+      const reviewElement = document.getElementById('review-status');
+      if (displayReviewStatus) reviewElement.textContent = status;
+      else reviewElement.remove();
       const list = document.getElementById('points');
       data.points.forEach((point, i) => {
         const item = document.createElement('li');
@@ -117,12 +119,14 @@ async function produce({ input, output, config }, previewOnly) {
         image.src = background;
         image.hidden = false;
       }
-    }, { data, background, status: STATUSES[data.review_status], parameters: presentation.manifest.parameters, structured, icons: presentation.icons, textEmphasis: presentation.textEmphasis });
+    }, { data, background, status: STATUSES[data.review_status], parameters: presentation.manifest.parameters, structured, icons: presentation.icons, textEmphasis: presentation.textEmphasis, displayReviewStatus: presentation.displayReviewStatus });
     await page.evaluate(async () => {
       const heading = getComputedStyle(document.getElementById('title'));
       const body = getComputedStyle(document.getElementById('introduction'));
       const label = getComputedStyle(document.querySelector('.point-heading') || document.getElementById('column'));
-      const requiredFonts = [heading, body, label].map(style => `${style.fontWeight} ${style.fontSize} ${style.fontFamily}`);
+      const brand = getComputedStyle(document.getElementById('brand-cn'));
+      const fontRoles = [heading, body, label, brand];
+      const requiredFonts = fontRoles.map(style => `${style.fontWeight} ${style.fontSize} ${style.fontFamily}`);
       // Noto 使用 unicode-range 分片，先加载校验字样对应的分片。
       await Promise.all(requiredFonts.map(font => document.fonts.load(font, '中文排版测试')));
       document.body.getBoundingClientRect();
@@ -137,8 +141,10 @@ async function produce({ input, output, config }, previewOnly) {
       for (const font of requiredFonts) {
         if (!document.fonts.check(font, '中文排版测试')) throw new Error(`中文字体未就绪：${font}`);
       }
-      if (![...document.fonts].some(face => face.status === 'loaded' && face.family.includes('Noto Serif SC'))) {
-        throw new Error('未加载到本地 Noto 中文字体，请运行 npm ci');
+      for (const family of new Set(fontRoles.map(style => style.fontFamily.split(',')[0].replace(/["']/g, '').trim()))) {
+        if (![...document.fonts].some(face => face.status === 'loaded' && face.family.includes(family))) {
+          throw new Error(`未加载到本地中文字体 ${family}，请运行 npm ci`);
+        }
       }
       await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
     });
@@ -205,7 +211,7 @@ async function produce({ input, output, config }, previewOnly) {
     await cdp.send('CSS.enable');
     const { root } = await cdp.send('DOM.getDocument');
     const fontReport = {};
-    for (const selector of ['#title', '#introduction', ...(structured ? ['.point-heading', '.point-copy', '#reminder'] : ['.point-text'])]) {
+    for (const selector of ['#title', '#introduction', ...(structured ? ['.point-heading', '.point-copy', '#reminder', '#brand-cn'] : ['.point-text'])]) {
       const { nodeId } = await cdp.send('DOM.querySelector', { nodeId: root.nodeId, selector });
       const { fonts } = await cdp.send('CSS.getPlatformFontsForNode', { nodeId });
       fontReport[selector] = fonts.map(({ familyName, isCustomFont, glyphCount }) => ({ familyName, isCustomFont, glyphCount }));

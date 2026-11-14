@@ -1,0 +1,263 @@
+{
+  "ok": true,
+  "errors": [],
+  "metrics": [
+    {
+      "region": "栏目信息",
+      "x": 72,
+      "y": 32,
+      "width": 740,
+      "height": 82
+    },
+    {
+      "region": "主标题",
+      "x": 72,
+      "y": 132,
+      "width": 800,
+      "height": 185.59375
+    },
+    {
+      "region": "引导语",
+      "x": 72,
+      "y": 339.59375,
+      "width": 936,
+      "height": 75
+    },
+    {
+      "region": "知识点 1",
+      "x": 72,
+      "y": 436.59375,
+      "width": 936,
+      "height": 133.1875
+    },
+    {
+      "region": "知识点 2",
+      "x": 72,
+      "y": 569.78125,
+      "width": 936,
+      "height": 134.1875
+    },
+    {
+      "region": "知识点 3",
+      "x": 72,
+      "y": 703.96875,
+      "width": 936,
+      "height": 134.1875
+    },
+    {
+      "region": "知识点 4",
+      "x": 72,
+      "y": 838.15625,
+      "width": 936,
+      "height": 134.1875
+    },
+    {
+      "region": "提醒区域",
+      "x": 60,
+      "y": 997,
+      "width": 852,
+      "height": 154
+    },
+    {
+      "region": "落款",
+      "x": 590,
+      "y": 1260,
+      "width": 440,
+      "height": 39
+    }
+  ],
+  "warnings": [],
+  "review_status": "pending_review",
+  "contentIntegrity": true,
+  "contentHash": "c90d51710daa0d9b80d94b75f39d53699e00b2a1f45a3a9f50213f290cd55721",
+  "presentation": {
+    "schemaVersion": 1,
+    "issue": "issue-002@2",
+    "design": "pink-bloom-issue-002@2",
+    "layout": "reference-editorial@2",
+    "background": "issue-002-background@2",
+    "statuses": {
+      "issue": "confirmed",
+      "design": "confirmed",
+      "layout": "confirmed",
+      "background": "confirmed"
+    },
+    "parameters": {
+      "panelPadding": 0,
+      "sectionGap": 24,
+      "pointGap": 0,
+      "titleOffsetTop": 0,
+      "titleAlign": "left",
+      "bodyWidth": 936,
+      "bodyAlign": "left",
+      "surfaceOpacity": 0,
+      "decorationOpacity": 0.85,
+      "titleWidth": 800,
+      "introGap": 22,
+      "pointsGap": 22,
+      "pointIconSize": 92,
+      "pointIconColumn": 112,
+      "pointNumberWidth": 80,
+      "pointColumnGap": 30,
+      "pointTextGap": 4,
+      "rowPadding": 7,
+      "reminderRadius": 48,
+      "reminderIconWidth": 100,
+      "reminderPaddingX": 24,
+      "reminderPaddingY": 16
+    },
+    "safeArea": {
+      "id": "main",
+      "x": 72,
+      "y": 132,
+      "width": 936,
+      "height": 846
+    },
+    "focalPoint": {
+      "x": 0.5,
+      "y": 0.5
+    },
+    "visualFocus": null,
+    "fit": "contain",
+    "regions": {
+      "masthead": {
+        "id": "masthead",
+        "x": 72,
+        "y": 32,
+        "width": 740,
+        "height": 82
+      },
+      "main": {
+        "id": "main",
+        "x": 72,
+        "y": 132,
+        "width": 936,
+        "height": 846
+      },
+      "reminder": {
+        "id": "reminder",
+        "x": 60,
+        "y": 997,
+        "width": 852,
+        "height": 154
+      },
+      "footer": {
+        "id": "footer",
+        "x": 590,
+        "y": 1260,
+        "width": 440,
+        "height": 58
+      }
+    },
+    "avoidAreas": [
+      {
+        "id": "leaves",
+        "x": 820,
+        "y": 0,
+        "width": 260,
+        "height": 230
+      },
+      {
+        "id": "tea-books",
+        "x": 932,
+        "y": 998,
+        "width": 148,
+        "height": 246
+      },
+      {
+        "id": "petals",
+        "x": 0,
+        "y": 1148,
+        "width": 560,
+        "height": 202
+      }
+    ],
+    "textEmphasis": {
+      "title": [
+        "觉得累"
+      ],
+      "brand_cn": [
+        "粉红"
+      ]
+    },
+    "displayReviewStatus": false,
+    "designTokens": {
+      "colorInk": "#51483f",
+      "colorMuted": "#756a5f",
+      "colorAccent": "#596a36",
+      "colorLine": "#decbc0",
+      "colorPanel": "#eeeddf",
+      "colorSurface": "#fffaf5",
+      "backgroundStart": "#faf1ec",
+      "backgroundEnd": "#f6eae3",
+      "titleSize": 64,
+      "introSize": 25,
+      "pointSize": 24,
+      "reminderSize": 23,
+      "metaSize": 27,
+      "brandSize": 26,
+      "smallSize": 16,
+      "labelSize": 30,
+      "numberSize": 48,
+      "titleLineHeight": 1.45,
+      "bodyLineHeight": 1.5,
+      "metaLineHeight": 1.5,
+      "radius": 24,
+      "lineWidth": 1,
+      "reminderLineWidth": 3,
+      "iconSize": 32,
+      "iconGap": 10,
+      "inlineGap": 18,
+      "numberWidth": 36,
+      "reminderPadding": 18,
+      "footerPadding": 16,
+      "statusGap": 12,
+      "headingWeight": 600,
+      "bodyWeight": 400,
+      "labelWeight": 600,
+      "pointHeadingSize": 32,
+      "pointHeadingLineHeight": 1.35,
+      "numberColor": "#b7827b",
+      "pointHeadingColor": "#65704f",
+      "brandPink": "#b7827b",
+      "iconDiscColor": "#eeeddf",
+      "rowLineOpacity": 0.55,
+      "iconDiscOpacity": 0.82,
+      "introColor": "#847a70",
+      "pointHeadingWeight": 700,
+      "brandWeight": 400,
+      "reminderHeadingColor": "#546339"
+    },
+    "fonts": {
+      "heading": "Noto Sans SC",
+      "body": "Noto Serif SC",
+      "pointHeading": "Noto Serif SC",
+      "brand": "Noto Sans SC"
+    },
+    "capability": "reference-editorial",
+    "templateVariant": "typography-v2",
+    "sources": {
+      "config/issues/issue-002.v2.json": "e87c6af1a2f7dc892f2c89b368bb6dfe045e293a97b4c59d98d43fe1f687b325",
+      "config/design/issue-002.v2.json": "3cf8f06d64f147a5aa7498db0dd00de5423c76e10169f9e30a642bc0d8987cef",
+      "config/layouts/reference-editorial.v2.json": "7948716092bc3782e7ba97d3f09c54515d8e6569fda220deaa4bf1ae52955445",
+      "config/backgrounds/issue-002.v2.json": "2aa3bae7dffa09a959848a2671b7106217763bafc4836e0d7aee1b45b3ae1bec"
+    },
+    "assets": {
+      "assets/icons/leaf.svg": "b16c78de76b4b12acd3272dd5dc53ce487f787af756a72ee12d711ae3b5c98cd",
+      "assets/icons/calendar.svg": "497ac75288cc126d310371c0c0f0ccf0b8ae3f24159736d42aa59cc9c6d4f9a1",
+      "assets/icons/clock.svg": "080e84739d072ea94de1731b32a33fdb4e7a22ac348800b6c8544148f0645555",
+      "assets/icons/walk.svg": "5266a7d9c06ed91db5be7377164794e06b1dba97d7ea3b3e879bd1493351106a",
+      "assets/icons/notebook.svg": "2dba668a28207d92d1e7053fbc33681364ef73041aa455a4e9ef4b393b46cb0a",
+      "assets/icons/shield.svg": "4b7bf62c693881d5a6a3fc6ac4a58890f9013175afe7937bef405c88dd7baa62",
+      "assets/backgrounds/issue-002.png": "ff1693b73ae00fd6ccd234aa998ff935a3365df4ce52b5fff88a37b2db80c484"
+    }
+  },
+  "sourceHashes": {
+    "template/reference-editorial.v2.html": "541097709e91c800f53fa2ee962fd5e72c8a7fcf27617d2e9b6f6774016aeec8",
+    "template/reference-editorial.v2.css": "44dd7ba2ac0d5362b812343c526ef24e3988a7d6d529b32f73029e29e0bfd159",
+    "package-lock.json": "df42e86171cd3eabc0a01457e3ff7f4b234458a495d953d51726610a56fbbf3e",
+    "scripts/render.mjs": "a371de8126b3f559c04c423ded8cb4d776d9dc858706ddcdf38de05c16712487",
+    "scripts/config.mjs": "a4dcbf9c528f9078f5d62df7d504ed8807cfb91fa9320cffde8fdafd602d0236",
+    "scripts/preflight.mjs": "9e055212fc0b38aaf1776dc2e7b6a524d54298c099206ecd70549d994a1d2d17"
+  }
+}

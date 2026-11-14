@@ -1,0 +1,29 @@
+{
+  "id": "issue-002",
+  "version": "2",
+  "status": "confirmed",
+  "design": "config/design/issue-002.v2.json",
+  "layout": "config/layouts/reference-editorial.v2.json",
+  "background": "config/backgrounds/issue-002.v2.json",
+  "safeArea": "main",
+  "regions": {
+    "masthead": "masthead",
+    "main": "main",
+    "reminder": "reminder",
+    "footer": "footer"
+  },
+  "textEmphasis": {
+    "title": [
+      "觉得累"
+    ],
+    "brand_cn": [
+      "粉红"
+    ]
+  },
+  "parameters": {
+    "rowPadding": 7,
+    "introGap": 22,
+    "pointsGap": 22
+  },
+  "displayReviewStatus": false
+}

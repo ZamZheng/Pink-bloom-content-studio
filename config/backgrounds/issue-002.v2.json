@@ -1,0 +1,74 @@
+{
+  "id": "issue-002-background",
+  "version": "2",
+  "status": "confirmed",
+  "description": "沿用第002期原背景与全部构图标注，仅补充字体微调布局的推荐版本",
+  "image": "assets/backgrounds/issue-002.png",
+  "canvas": {
+    "width": 1080,
+    "height": 1350
+  },
+  "fit": "contain",
+  "safeAreas": [
+    {
+      "id": "masthead",
+      "x": 72,
+      "y": 32,
+      "width": 740,
+      "height": 82
+    },
+    {
+      "id": "main",
+      "x": 72,
+      "y": 132,
+      "width": 936,
+      "height": 846
+    },
+    {
+      "id": "reminder",
+      "x": 60,
+      "y": 997,
+      "width": 852,
+      "height": 154
+    },
+    {
+      "id": "footer",
+      "x": 590,
+      "y": 1260,
+      "width": 440,
+      "height": 58
+    }
+  ],
+  "focalPoint": {
+    "x": 0.5,
+    "y": 0.5
+  },
+  "visualFocus": null,
+  "avoidAreas": [
+    {
+      "id": "leaves",
+      "x": 820,
+      "y": 0,
+      "width": 260,
+      "height": 230
+    },
+    {
+      "id": "tea-books",
+      "x": 932,
+      "y": 998,
+      "width": 148,
+      "height": 246
+    },
+    {
+      "id": "petals",
+      "x": 0,
+      "y": 1148,
+      "width": 560,
+      "height": 202
+    }
+  ],
+  "recommendedLayouts": [
+    "reference-editorial@1",
+    "reference-editorial@2"
+  ]
+}

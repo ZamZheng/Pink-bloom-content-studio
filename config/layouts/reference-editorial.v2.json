@@ -1,0 +1,23 @@
+{
+  "id": "reference-editorial",
+  "version": "2",
+  "status": "confirmed",
+  "description": "保留参考编辑结构，增加独立标题/小标题/落款字体和字重",
+  "capability": "reference-editorial",
+  "parameters": {
+    "titleWidth": 800,
+    "introGap": 26,
+    "pointsGap": 26,
+    "pointIconSize": 92,
+    "pointIconColumn": 112,
+    "pointNumberWidth": 80,
+    "pointColumnGap": 30,
+    "pointTextGap": 4,
+    "rowPadding": 9,
+    "reminderRadius": 48,
+    "reminderIconWidth": 100,
+    "reminderPaddingX": 24,
+    "reminderPaddingY": 16
+  },
+  "templateVariant": "typography-v2"
+}
