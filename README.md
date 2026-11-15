@@ -1,4 +1,25 @@
-# Pink Bloom Content Studio · V0.3
+# Pink Bloom Content Studio · V0.4
+
+V0.4新增独立字体角色、语义图标、完整品牌落款组件、三/四条自然排版，以及绑定图片和安全区摘要的外部背景确认关卡。**新生产使用 `scripts/render-v04.mjs`；旧入口及第002期v2归档保持原样。**
+
+安装：`npm ci`、`npm ci --prefix v04`、`npm run setup:browser`。新流程及全部配置说明见 [V0.4使用文档](docs/v0.4.md)，实测结果见 [V0.4验收记录](docs/validation-v0.4.md)。
+
+```bash
+# 只预览无字背景，供外部工作流取得用户确认
+node scripts/render-v04.mjs --background-preview --config /tmp/run/config.json --output /tmp/run/background.html
+# 技术排版预览（背景未确认也可诊断，不能正式合成）
+node scripts/render-v04.mjs --preview --input /tmp/run/content.json --config /tmp/run/config.json --output /tmp/run/preview.html
+# 仅背景已确认、质量与几何检查通过时输出2160×2700 PNG
+node scripts/render-v04.mjs --input /tmp/run/content.json --config /tmp/run/config.json --output /tmp/run/card.png
+# 通用工程样张，不使用真实期数或患者资料
+node scripts/examples-v04.mjs
+```
+
+**新的花瓣线稿是待用户确认的品牌候选，不是正式Logo。** 背景审美、无字性和医学内容均保留人工审核。没有接入Notion或自动发布服务，不存储第003期业务成品。
+
+以下V0.3说明保留为旧入口的兼容/复现文档，其中“未确认版本”等描述属于当时阶段；第002期v2现已有摘要锁，以末尾存档记录为准。
+
+---
 
 为「向光而行 粉红伙伴社区（Pink Bloom）」生成患者康复知识卡片的轻量 Node.js 工具。JSON 提供文案，统一设计规范与布局配置驱动 HTML/CSS，自然流式排版，由 Playwright Chromium 导出高清 PNG。无需 Web 服务、登录或数据库，不需要个人电脑持续开机。
 
