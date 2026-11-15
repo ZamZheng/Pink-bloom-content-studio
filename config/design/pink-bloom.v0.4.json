@@ -1,0 +1,92 @@
+{
+  "id": "pink-bloom-editorial",
+  "version": "0.4",
+  "status": "draft",
+  "typography": {
+    "heroTitle": {
+      "family": "Noto Serif SC",
+      "size": 64,
+      "weight": 600,
+      "lineHeight": 1.5,
+      "color": "#51483f",
+      "tracking": 0,
+      "style": "normal",
+      "emphasis": {
+        "color": "#52613f"
+      }
+    },
+    "introduction": {
+      "family": "Noto Serif SC",
+      "size": 25,
+      "weight": 400,
+      "lineHeight": 1.6,
+      "color": "#847a70",
+      "tracking": 0,
+      "style": "normal"
+    },
+    "pointHeading": {
+      "family": "Noto Serif SC",
+      "size": 32,
+      "weight": 700,
+      "lineHeight": 1.5,
+      "color": "#52613f",
+      "tracking": 0,
+      "style": "normal"
+    },
+    "pointBody": {
+      "family": "Noto Serif SC",
+      "size": 24,
+      "weight": 400,
+      "lineHeight": 1.5,
+      "color": "#51483f",
+      "tracking": 0,
+      "style": "normal"
+    },
+    "pointNumber": {
+      "family": "Libre Baskerville",
+      "size": 46,
+      "weight": 400,
+      "lineHeight": 1.5,
+      "color": "#b7827b",
+      "tracking": 0,
+      "style": "italic"
+    },
+    "reminderHeading": {
+      "family": "Noto Serif SC",
+      "size": 29,
+      "weight": 600,
+      "lineHeight": 1.5,
+      "color": "#52613f",
+      "tracking": 0,
+      "style": "normal"
+    },
+    "reminderBody": {
+      "family": "Noto Serif SC",
+      "size": 23,
+      "weight": 400,
+      "lineHeight": 1.5,
+      "color": "#51483f",
+      "tracking": 0,
+      "style": "normal"
+    },
+    "brandSignature": {
+      "family": "Noto Sans SC",
+      "size": 26,
+      "weight": 400,
+      "lineHeight": 1.5,
+      "color": "#51483f",
+      "tracking": 0.2,
+      "style": "normal"
+    }
+  },
+  "colors": {
+    "paper": "#faf5ee",
+    "ink": "#51483f",
+    "icon": "#63734b",
+    "disc": "#e9eddf",
+    "rule": "#ded5c8",
+    "reminder": "#e9ecdf",
+    "brandPink": "#b7827b",
+    "brandSymbol": "#b7827b"
+  }
+}

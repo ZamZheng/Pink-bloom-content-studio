@@ -1,0 +1,92 @@
+{
+  "id": "pink-bloom-line-icons",
+  "version": "1",
+  "status": "draft",
+  "strokeWidth": 1.6,
+  "viewBox": "0 0 48 48",
+  "icons": {
+    "shoulder-arm": {
+      "file": "assets/icons/v04/shoulder-arm.svg",
+      "label": "肩膀紧绷",
+      "semantics": [
+        "shoulder-arm",
+        "shoulder-tightness",
+        "肩臂活动",
+        "肩膀紧绷"
+      ]
+    },
+    "professional-guidance": {
+      "file": "assets/icons/v04/professional-guidance.svg",
+      "label": "医护评估",
+      "semantics": [
+        "professional-guidance",
+        "medical-assessment",
+        "专业指导",
+        "医护评估"
+      ]
+    },
+    "gentle-mobility": {
+      "file": "assets/icons/v04/gentle-mobility.svg",
+      "label": "动作范围",
+      "semantics": [
+        "gentle-mobility",
+        "range-of-motion",
+        "轻柔活动",
+        "动作范围"
+      ]
+    },
+    "daily-dressing": {
+      "file": "assets/icons/v04/daily-dressing.svg",
+      "label": "日常动作",
+      "semantics": [
+        "daily-dressing",
+        "daily-activity",
+        "穿衣",
+        "日常动作"
+      ]
+    },
+    "general-info": {
+      "file": "assets/icons/v04/general-info.svg",
+      "label": "通用信息",
+      "semantics": [
+        "general-info",
+        "通用信息"
+      ]
+    },
+    "calendar": {
+      "file": "assets/icons/v04/calendar.svg",
+      "label": "恢复时间",
+      "semantics": [
+        "calendar",
+        "recovery-time",
+        "恢复时间"
+      ]
+    },
+    "water-drop": {
+      "file": "assets/icons/v04/water-drop.svg",
+      "label": "温柔清洁",
+      "semantics": [
+        "water-drop",
+        "gentle-cleaning",
+        "温柔清洁"
+      ]
+    },
+    "skin-care": {
+      "file": "assets/icons/v04/skin-care.svg",
+      "label": "保湿护理",
+      "semantics": [
+        "skin-care",
+        "moisturizing",
+        "保湿护理"
+      ]
+    },
+    "sun-protection": {
+      "file": "assets/icons/v04/sun-protection.svg",
+      "label": "阳光防护",
+      "semantics": [
+        "sun-protection",
+        "阳光防护"
+      ]
+    }
+  }
+}
