@@ -1,5 +1,13 @@
 # V0.4 实际验收与交付清单
 
+## 2026-11-23圆环参考V2校正
+
+- 新增ring-reference.v2.svg与来源/摘要登记；V1仅保留追溯，工程示意改用V2。
+- V2为按用户原图校正的描摹工作稿，待人工核对，不作为已获官方原始源矢量或逐像素复原。
+- 重新npm ci（根及v04）成功；真实Chromium下npm test仍为39通过、0失败。
+- scripts/brand-specimen.mjs成功生成品牌样张及V2圆环示意，已实际查看；平色曲线环带及透明内圈完整，无棋盘格、杂点或AI去底渐变。
+- 固定品牌identity.v1与17项历史锁定依赖保持不变；未提交本期背景、PNG或医学文案。Notion素材同步由外部执行者完成。
+
 ## 2026-11-23默认入口迁移验收
 
 - 新增实际npm命令端到端验证：npm run render加载schemaVersion=4与pink-bloom-identity；npm run preview在背景pending时保留诊断且exportAllowed=false。

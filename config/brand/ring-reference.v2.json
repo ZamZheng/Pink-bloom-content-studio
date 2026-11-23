@@ -1,0 +1,20 @@
+{
+  "id": "pink-bloom-icon-ring-reference",
+  "version": "2",
+  "status": "draft",
+  "asset": "assets/brand/ring-reference.v2.svg",
+  "sha256": "b0b8fde00b757fdc20ef7d934f0342deb405032fa2400002a193850c5a4aad3d",
+  "source": "用户2026-11-23重新上传的361×366圆环栅格参考",
+  "sourceKind": "manual-trace-working-copy",
+  "exactOriginalVector": false,
+  "confirmation": "待用户核对描摹工作稿；用户原图为形态判断依据，非声称取得官方源矢量或逐像素复原",
+  "replaces": "assets/brand/ring-reference.v1.svg",
+  "previousAssetStatus": "deprecated-not-for-new-backgrounds",
+  "rules": [
+    "保留非等宽环带、偏心内圈及实际弧形接缝，不用四等分同心环替代",
+    "保持黄绿蓝紫的对应位置及交叠方向，不镜像、不改色序、不作非等比拉伸",
+    "背景只允许整体等比缩放、平移、裁切和统一透明度；避免逐段随机重绘",
+    "真实透明底，透明棋盘格、白色底框及AI去底杂点均不得进入背景",
+    "最终含环带的无字背景仍需用户确认"
+  ]
+}
