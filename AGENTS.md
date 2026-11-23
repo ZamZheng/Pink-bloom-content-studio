@@ -16,3 +16,5 @@
 - 不提交 `node_modules`、大量输出图片或临时文件。维持轻量工程，不引入无必要框架。
 - 未获明确任务授权，不连接 Notion、不申请 Token、不增加 AI API、机器人、自动发布或其他栏目。
 - 当前暂停存档位于 `docs/checkpoints/issue-002-v2.md`。用户说“开启”时先读取该文件，从第002期 v2继续；用户要求患者卡片图面不显示审核字样，内部医学状态仍需保留，不得据此标为审核通过。
+
+- 新一期生产默认从更新后的main运行 `npm run render` / `npm run preview`（V0.4入口），必须使用schemaVersion=4配置、固定identity.v1品牌及人工确认背景。`render:legacy` / `preview:legacy`与原scripts/render.mjs仅用于明确要求的历史复现；新配置出错不可自动退回旧入口。

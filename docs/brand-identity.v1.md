@@ -25,7 +25,7 @@
 - 本期design中的brandSignature以及colors.brandPink/brandSymbol不会改变固定品牌；加载器用固定规范替换品牌角色和色彩，报告记录最终实际计算样式。`textEmphasis.brandSignature`被拒绝，不能更换社区着色范围。
 - brandGap与brandSymbolSize由固定规范接管；本期布局仍可调整brandAlign，背景的masthead/brand安全区控制组件整体位置。背景不同不意味着随意换品牌色；对比度不足时应调整背景或安全区。
 - 规范JSON与两枚SVG登记在 `config/brand/identity.v1.lock.json`；摘要不符或锁登记缺项直接失败。旧候选路径、临时Logo配置直接失败。品牌变更须新增版本并明确迁移入口，不覆盖V1、不删除锁来绕过保护。
-- `config/versions.lock.json`及第002期v2归档完全不变。旧入口仅用于历史回归，不作为新一期生产入口。此升级仍在V0.4开发分支/PR中，未合并前不得声称main已启用。
+- `config/versions.lock.json`及第002期v2归档完全不变。旧入口仅用于历史回归，不作为新一期生产入口。合并到main后，新任务须更新检出main；默认npm run render / npm run preview使用新版，历史复现明确使用render:legacy / preview:legacy。固定品牌配置必须随本期报告核验，不能沿用旧工作区冒称已经更新。
 
 ## ICON四色圆环背景
 

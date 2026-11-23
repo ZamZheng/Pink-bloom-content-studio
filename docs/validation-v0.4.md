@@ -1,5 +1,13 @@
 # V0.4 实际验收与交付清单
 
+## 2026-11-23默认入口迁移验收
+
+- 新增实际npm命令端到端验证：npm run render加载schemaVersion=4与pink-bloom-identity；npm run preview在背景pending时保留诊断且exportAllowed=false。
+- 本次真实Chromium完整npm test：**39通过、0失败**；不是仅断言package.json字符串。
+- npm run render:legacy对原README示例实际导出成功，2160×2700、ok=true；旧脚本、历史锁和17项锁定依赖不变。
+- README、AGENTS、新版配置文档采用默认新版/显式历史命令。旧文档中的历史验证命令保留为阶段记录，不作为当前生产入口。
+- 本次代码通过PR #1进入main；Notion同步main与新版npm入口，不再要求检出长期开发分支。
+
 ## 2026-11-23固定品牌规范追加验收
 
 以下是品牌升级后的最新结果；本文后半段保留2026-11-15的阶段记录，其中“候选待确认”不再代表新生产的默认品牌入口。

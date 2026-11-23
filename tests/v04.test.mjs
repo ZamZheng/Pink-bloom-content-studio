@@ -17,6 +17,16 @@ test('V0.4 实际Chromium视觉系统与外部背景确认',async t=>{
   const reset=async()=>{await writeFile(f.backgroundFile,f.bytes);await writeJSON(f.input,f.data);await writeJSON(f.config,f.presentation);};
   const check=(name,fn)=>t.test(name,async()=>{await reset();try{await fn();}finally{await reset();}});
   let four;
+  await check('默认npm命令调用新版；背景未确认时预览不放行正式导出',async()=>{
+    const output=path.join(dir,'npm-default.png');
+    execFileSync('npm',['run','render','--','--input',f.input,'--config',f.config,'--output',output],{cwd:ROOT,maxBuffer:8*1024*1024});
+    const r=await json(output.replace('.png','.report.json'));
+    assert.equal(r.schemaVersion,4);assert.equal(r.brand.id,'pink-bloom-identity');assert.equal(r.exportAllowed,true);
+    const c=structuredClone(f.presentation);c.background.status='pending';await writeJSON(f.config,c);
+    const preview=path.join(dir,'npm-default-preview.html');
+    execFileSync('npm',['run','preview','--','--input',f.input,'--config',f.config,'--output',preview],{cwd:ROOT,maxBuffer:8*1024*1024});
+    assert.equal((await json(preview.replace('.html','.report.json'))).exportAllowed,false);
+  });
   await check('栏目、英文、落款和期数的错误输入均拒绝',async()=>{
     for(const [key,value] of [['column','康复纸条'],['brand_en','Pink Bloom'],['brand_cn','向光而行 病友会'],['issue','第三期'],['issue','NO.3'],['issue','NO.001 病友会']]) {
       assert.throws(()=>validateV04Content({...f.data,[key]:value}),/固定栏目|期数必须/);
