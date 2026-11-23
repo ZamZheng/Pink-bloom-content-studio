@@ -1,0 +1,24 @@
+{
+  "id": "pink-bloom-identity",
+  "version": "1",
+  "status": "confirmed",
+  "confirmation": {
+    "basis": "用户2026-11-23指定已验证的深海蓝第001期成图，要求固定栏目头和组织落款。这里是依据栅格视觉建立的可复现工程标准，不声称恢复原始字体文件、源矢量或精确取色。",
+    "scope": "栏目头、完整落款的结构、固定文字及可复现字体色彩标准；不确认任何新一期背景或医学内容"
+  },
+  "text": "向光而行 粉红伙伴社区",
+  "emphasis": "粉红伙伴社区",
+  "symbol": "assets/brand/signature-petals.v2.svg",
+  "symbolStatus": "confirmed",
+  "leaf": "assets/brand/column-leaf.v1.svg",
+  "column": "康复小纸条",
+  "english": "PINK BLOOM",
+  "colors": { "navy": "#123f54", "mauve": "#9b718b", "rule": "#c9c1ba" },
+  "masthead": {
+    "column": { "family": "Noto Serif SC", "size": 30, "weight": 700, "lineHeight": 1.5, "color": "#123f54", "tracking": 2, "style": "normal" },
+    "issue": { "family": "Noto Serif SC", "size": 30, "weight": 400, "lineHeight": 1.5, "color": "#123f54", "tracking": 2, "style": "normal" },
+    "english": { "family": "Noto Sans SC", "size": 13, "weight": 400, "lineHeight": 1.5, "color": "#9b718b", "tracking": 5, "style": "normal" }
+  },
+  "signature": { "family": "Noto Serif SC", "size": 22, "weight": 400, "lineHeight": 1.5, "color": "#123f54", "tracking": 0.2, "style": "normal" },
+  "metrics": { "leafSize": 30, "symbolSize": 26, "signatureGap": 12 }
+}

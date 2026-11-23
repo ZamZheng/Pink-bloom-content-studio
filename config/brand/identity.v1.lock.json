@@ -1,0 +1,9 @@
+{
+  "id": "pink-bloom-identity",
+  "version": "1",
+  "files": {
+    "config/brand/identity.v1.json": "0b476acfe22b84a59e3fa92fedf5f1d2307ace1d29357b6754a042cfde63b017",
+    "assets/brand/column-leaf.v1.svg": "a461f7fd6d5b840073a4fab2dcc6556f9e003e95513d13380508965f9319c406",
+    "assets/brand/signature-petals.v2.svg": "1256c5bbaf6f9c1cfb70ba17b9dd1c5b2e633b38995b318ef818169dd9b4338b"
+  }
+}

@@ -10,9 +10,11 @@
   "scripts": {
     "setup:browser": "playwright install chromium",
     "setup:browser:deps": "playwright install-deps chromium",
-    "render": "node scripts/render.mjs",
+    "render": "node scripts/render-v04.mjs",
     "test": "node --test tests/*.test.mjs",
-    "preview": "node scripts/render.mjs --preview"
+    "preview": "node scripts/render-v04.mjs --preview",
+    "render:legacy": "node scripts/render.mjs",
+    "preview:legacy": "node scripts/render.mjs --preview"
   },
   "dependencies": {
     "@fontsource/noto-sans-sc": "5.3.1",

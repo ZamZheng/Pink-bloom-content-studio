@@ -1,5 +1,7 @@
 # 可配置动态排版（V0.2）
 
+**V0.4新入口说明：** 新生产使用独立的 `scripts/render-v04.mjs` 和schemaVersion=4；字体角色在 `design/pink-bloom.v0.4.json`，图标在 `icons/library.v04.json`，固定品牌组件在 `brand/identity.v1.json`（独立摘要锁，详见[品牌规范](../docs/brand-identity.v1.md)）。每期背景与安全区允许来自临时目录，由外部人工确认记录绑定摘要。见 [V0.4完整配置说明](../docs/v0.4.md)。本文件以下保留V0.2/V0.3配置格式的历史说明；第002期v2已有confirmed锁，不能按早期“没有已确认版本”的文字删除或覆盖它。
+
 当前设计和布局都是工程占位 `draft`，不是用户确认的品牌视觉。配置不含医学文案，日常文案仍仅在 `content/*.json` 中维护。
 
 ## 四类配置

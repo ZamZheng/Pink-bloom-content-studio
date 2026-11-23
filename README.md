@@ -1,4 +1,27 @@
-# Pink Bloom Content Studio · V0.3
+# Pink Bloom Content Studio · V0.4
+
+V0.4新增独立字体角色、语义图标、完整品牌落款组件、三/四条自然排版，以及绑定图片和安全区摘要的外部背景确认关卡。**main的新生产默认入口为 `npm run render` / `npm run preview`（调用 `scripts/render-v04.mjs`）；历史复现仅使用 `render:legacy` / `preview:legacy`。旧入口及第002期v2归档保持原样。**
+
+安装：`npm ci`、`npm ci --prefix v04`、`npm run setup:browser`。新流程及全部配置说明见 [V0.4使用文档](docs/v0.4.md)，实测结果见 [V0.4验收记录](docs/validation-v0.4.md)。
+
+```bash
+# 只预览无字背景，供外部工作流取得用户确认
+node scripts/render-v04.mjs --background-preview --config /tmp/run/config.json --output /tmp/run/background.html
+# 技术排版预览（背景未确认也可诊断，不能正式合成）
+npm run preview -- --input /tmp/run/content.json --config /tmp/run/config.json --output /tmp/run/preview.html
+# 仅背景已确认、质量与几何检查通过时输出2160×2700 PNG
+npm run render -- --input /tmp/run/content.json --config /tmp/run/config.json --output /tmp/run/card.png
+# 通用工程样张，NO.000为测试保留值，不使用患者资料
+node scripts/examples-v04.mjs
+# 固定品牌组件与四色圆环使用示意
+node scripts/brand-specimen.mjs
+```
+
+**新生产的栏目头与组织落款现使用[固定品牌规范V1](docs/brand-identity.v1.md)：深海蓝#123f54、灰紫粉#9b718b、稳定细线SVG与本地开源字体；错名、旧候选、锁定资产被修改会报错。** 背景审美、无字性和医学内容均保留人工审核。没有接入Notion或自动发布服务，不存储第003期业务成品。
+
+以下V0.3说明保留为旧入口的兼容/复现文档，其中“未确认版本”等描述属于当时阶段；第002期v2现已有摘要锁，以末尾存档记录为准。
+
+---
 
 为「向光而行 粉红伙伴社区（Pink Bloom）」生成患者康复知识卡片的轻量 Node.js 工具。JSON 提供文案，统一设计规范与布局配置驱动 HTML/CSS，自然流式排版，由 Playwright Chromium 导出高清 PNG。无需 Web 服务、登录或数据库，不需要个人电脑持续开机。
 
@@ -21,8 +44,8 @@ npm run setup:browser
 ## 先预览，再生成 PNG
 
 ```bash
-npm run preview -- --input content/issue-demo.json --output output/issue-demo.html
-npm run render -- --input content/issue-demo.json --output output/issue-demo.png
+npm run preview:legacy -- --input content/issue-demo.json --output output/issue-demo.html
+npm run render:legacy -- --input content/issue-demo.json --output output/issue-demo.png
 ```
 
 预览 HTML 显示文字、安全区/视觉重心辅助线和检查报告，直接在当前环境浏览器打开，无需服务。它引用当前仓库的本地字体及图片，不是可脱离仓库分发的独立网页；新云任务安装依赖后重新生成即可。
@@ -38,8 +61,8 @@ npm run render -- --input content/issue-demo.json --output output/issue-demo.png
 ## 只改配置的日常变化
 
 ```bash
-npm run preview -- --input content/issue-demo.json --config config/issues/issue-demo-compact.v1.json --output output/compact.html
-npm run render -- --input content/issue-demo.json --config config/issues/issue-demo-compact.v1.json --output output/compact.png
+npm run preview:legacy -- --input content/issue-demo.json --config config/issues/issue-demo-compact.v1.json --output output/compact.html
+npm run render:legacy -- --input content/issue-demo.json --config config/issues/issue-demo-compact.v1.json --output output/compact.png
 ```
 
 同一纵向编辑布局可通过配置改变标题上方留白/对齐、正文宽度/位置、段落和知识点间距、面板及装饰透明度。文字按实际高度自然流动，不预设每个段落的固定坐标或高度。未指定 `--config` 时使用标准示例配置，兼容 V0.1 导出命令。
@@ -105,8 +128,8 @@ npm test
 ## 第002期（独立配置，待审核）
 
 ```bash
-npm run preview -- --input content/issue-002.json --config config/issues/issue-002.v1.json --output output/issue-002.html
-npm run render -- --input content/issue-002.json --config config/issues/issue-002.v1.json --output output/issue-002.png
+npm run preview:legacy -- --input content/issue-002.json --config config/issues/issue-002.v1.json --output output/issue-002.html
+npm run render:legacy -- --input content/issue-002.json --config config/issues/issue-002.v1.json --output output/issue-002.png
 ```
 
 本期文案为用户提供的完整稿，`review_status: "pending_review"`。背景原文件已进入仓库，无需运行时重新下载。参考编辑布局支持知识点图标、小标题/说明、标题关键词与落款局部颜色、独立提醒和右下落款。原默认 HTML/CSS 保持不变，日常参数调整使用本期 JSON 配置。
