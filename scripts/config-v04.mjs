@@ -2,6 +2,7 @@ import { readFile, realpath } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createHash } from 'node:crypto';
+import { loadIdentity, IDENTITY_FILE } from './identity-v1.mjs';
 
 export const ROOT = fileURLToPath(new URL('../', import.meta.url));
 export const sha256 = value => createHash('sha256').update(value).digest('hex');
@@ -79,6 +80,9 @@ export async function loadV04(configFile) {
   const design = await json(designPath); version(design, 'design');
   keys(design, ['id','version','status','typography','colors'], 'design');
   keys(design.typography, ROLES, 'typography');
+  const brand = await loadIdentity(ROOT,c.brand);
+  // Brand roles are governed by the locked identity, independently of the issue palette.
+  design.typography.brandSignature={...brand.signature};
   const fontFiles = new Set();
   for (const role of ROLES) await validateRole(design.typography[role], role, fontFiles);
   // Latin-only fonts must never silently stand in for Chinese content.
@@ -86,8 +90,7 @@ export async function loadV04(configFile) {
   const palette = design.colors;
   keys(palette, ['paper','ink','icon','disc','rule','reminder','brandPink','brandSymbol'], 'colors');
   for (const key of ['paper','ink','icon','disc','rule','reminder','brandPink','brandSymbol']) color(palette[key], `colors.${key}`);
-  // Masthead needs these exact local faces even when content roles use another family.
-  for (const face of [{family:'Noto Serif SC',weight:400,style:'normal'},{family:'Noto Serif SC',weight:600,style:'normal'},{family:'Libre Baskerville',weight:400,style:'normal'}]) await validateFont(face,'masthead',fontFiles);
+  for (const face of Object.values(brand.masthead)) await validateFont(face,'masthead',fontFiles);
   const layoutPath=typeof c.layout==='string'?await repoFile(c.layout):await repoFile('config/layouts/editorial.v0.4.json');
   const layoutConfig=typeof c.layout==='object'?c.layout:await json(layoutPath);
   keys(layoutConfig,['id','version','status','parameters'],'layout preset');version(layoutConfig,'layout preset');
@@ -98,23 +101,19 @@ export async function loadV04(configFile) {
   for (const [k,[a,b]] of Object.entries(LIMITS)) num(layout[k], a,b,`layout.${k}`);
   for (const [k, options] of Object.entries({titleAlign:['left','center','right'],rowAlign:['start','center'],brandAlign:['flex-start','center','flex-end']})) if (!options.includes(layout[k])) fail(`layout.${k} 无效`);
   if (layout.iconDiscSize>layout.iconColumn) fail('图标圆底超出图标列');
-  const brandPath = await repoFile(c.brand || 'config/brand/brand-signature.v1.json');
-  const brand = await json(brandPath); version(brand,'brand');
-  if (brand.text!=='向光而行 粉红伙伴社区' || brand.emphasis!=='粉红') fail('固定品牌文字不可改变');
-  if (!['pending_confirmation','confirmed'].includes(brand.symbolStatus)) fail('品牌符号状态无效');
-  const symbolPath=await repoFile(brand.symbol);
-  const symbol=await svg(symbolPath);
-  if(brand.symbolStatus==='confirmed') {
-    const a=brand.symbolConfirmation;
-    if(!object(a)||typeof a.by!=='string'||!a.by.trim()||!Number.isFinite(Date.parse(a.at))||a.sha256!==sha256(symbol)) fail('正式品牌符号缺少外部人工确认及SVG摘要');
-  }
+  const brandPath = await repoFile(IDENTITY_FILE);
+  const symbol=await svg(await repoFile(brand.symbol));
+  const leaf=await svg(await repoFile(brand.leaf));
+  layout.brandGap=brand.metrics.signatureGap;
+  layout.brandSymbolSize=brand.metrics.symbolSize;
   const background=await loadBackground(c.background, path.dirname(filename));
   if (layout.titleWidth>background.geometry.safeAreas.content.width) fail('标题宽度超出安全区');
   const textEmphasis=c.textEmphasis || {};
   keys(textEmphasis, ROLES, 'textEmphasis');
+  if (textEmphasis.brandSignature!==undefined) fail('固定品牌强调范围不可通过本期配置改变');
   for(const [role, phrases] of Object.entries(textEmphasis)) if(!Array.isArray(phrases)||phrases.some(p=>typeof p!=='string'||!p)) fail(`textEmphasis.${role} 必须是非空短语数组`);
   const registry=await json(path.join(ROOT,'config/icons/library.v04.json'));
-  return { config:c, archiveLocks, design, layout, layoutVersion:`${layoutConfig.id}@${layoutConfig.version}`, brand:{...brand,symbol}, background, fontFiles:[...fontFiles], registry, textEmphasis, sourceFiles:[path.relative(ROOT,designPath),path.relative(ROOT,brandPath),path.relative(ROOT,layoutPath),'template/editorial.v04.html','template/editorial.v04.css','scripts/config-v04.mjs','scripts/render-v04.mjs','scripts/preflight.mjs','config/icons/library.v04.json','package-lock.json','v04/package-lock.json',brand.symbol] };
+  return { config:c, archiveLocks, design, layout, layoutVersion:`${layoutConfig.id}@${layoutConfig.version}`, brand:{...brand,symbol,leaf}, background, fontFiles:[...fontFiles], registry, textEmphasis, sourceFiles:[path.relative(ROOT,designPath),path.relative(ROOT,brandPath),path.relative(ROOT,layoutPath),'template/editorial.v04.html','template/editorial.v04.css','scripts/config-v04.mjs','scripts/identity-v1.mjs','config/brand/identity.v1.lock.json','scripts/render-v04.mjs','scripts/preflight.mjs','config/icons/library.v04.json','package-lock.json','v04/package-lock.json',brand.symbol,brand.leaf] };
 }
 export async function svg(file) {
   const value=await readFile(file,'utf8');

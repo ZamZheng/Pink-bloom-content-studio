@@ -4,9 +4,9 @@
 [data-region]{min-width:0;min-height:0;overflow-wrap:anywhere}
 [data-role]{white-space:pre-wrap;font-synthesis:none}
 #masthead{position:absolute;left:var(--masthead-x);top:var(--masthead-y);width:var(--masthead-width);height:var(--masthead-height);display:flex;align-items:flex-start;gap:16px;font:400 27px/1.5 "Noto Serif SC",serif;color:var(--ink)}
-.column-leaf{width:32px;height:36px;margin-top:2px;background:var(--icon-color);mask:var(--leaf-mask) center/contain no-repeat;flex:none}
-#column{font-weight:600;letter-spacing:2px}#brand-en{font:400 14px/1.5 "Libre Baskerville",serif;color:var(--brand-pink);letter-spacing:4px;margin-top:4px}
-#issue{padding-left:20px;border-left:1px solid var(--rule-color);white-space:nowrap}.masthead-rule{flex:1;border-top:1px solid var(--rule-color);margin-top:22px}
+.column-leaf{width:var(--leaf-size);height:var(--leaf-size);margin-top:2px;background:var(--identity-navy);mask:var(--leaf-mask) center/contain no-repeat;flex:none}
+#brand-en{margin-top:4px}
+#issue{padding-left:20px;border-left:1px solid var(--identity-rule);white-space:nowrap}.masthead-rule{flex:1;border-top:1px solid var(--identity-rule);margin-top:22px}
 .surface{position:absolute;left:var(--content-x);top:var(--content-y);width:var(--content-width);height:var(--content-height);display:flex;flex-direction:column;gap:0}
 .surface>*{flex-shrink:0}#title{max-width:var(--title-width);text-align:var(--title-align)}#introduction{margin-top:var(--intro-gap)}
 #points{list-style:none;display:flex;flex-direction:column;gap:var(--point-gap);margin-top:var(--points-gap)}

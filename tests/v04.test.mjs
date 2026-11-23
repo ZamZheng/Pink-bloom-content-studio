@@ -6,7 +6,8 @@ import path from 'node:path';
 import { execFileSync } from 'node:child_process';
 import { chromium } from 'playwright';
 import { makeFixture, writeJSON } from './helpers/v04-fixture.mjs';
-import { renderV04,previewV04,previewBackgroundV04 } from '../scripts/render-v04.mjs';
+import { renderV04,previewV04,previewBackgroundV04,validateV04Content } from '../scripts/render-v04.mjs';
+import { loadIdentity } from '../scripts/identity-v1.mjs';
 import { ROOT,loadV04,resolveIcon,geometryHash,sha256,verifyArchive,json } from '../scripts/config-v04.mjs';
 
 test('V0.4 实际Chromium视觉系统与外部背景确认',async t=>{
@@ -16,6 +17,43 @@ test('V0.4 实际Chromium视觉系统与外部背景确认',async t=>{
   const reset=async()=>{await writeFile(f.backgroundFile,f.bytes);await writeJSON(f.input,f.data);await writeJSON(f.config,f.presentation);};
   const check=(name,fn)=>t.test(name,async()=>{await reset();try{await fn();}finally{await reset();}});
   let four;
+  await check('栏目、英文、落款和期数的错误输入均拒绝',async()=>{
+    for(const [key,value] of [['column','康复纸条'],['brand_en','Pink Bloom'],['brand_cn','向光而行 病友会'],['issue','第三期'],['issue','NO.3'],['issue','NO.001 病友会']]) {
+      assert.throws(()=>validateV04Content({...f.data,[key]:value}),/固定栏目|期数必须/);
+    }
+    assert.equal(validateV04Content({...f.data,issue:'NO.003'}).issue,'NO.003');
+  });
+  await check('正文主题色和字体变化不会改变固定品牌组件',async()=>{
+    const temporary=await mkdtemp(path.join(ROOT,'output','identity-theme-test-'));
+    try {
+      const design=await json(path.join(ROOT,'config/design/pink-bloom.v0.4.json'));
+      design.typography.brandSignature={...design.typography.brandSignature,family:'Noto Sans SC',color:'#ff0000'};
+      design.colors.brandPink='#ff0000';design.colors.brandSymbol='#00ff00';
+      const file=path.join(temporary,'design.json');await writeJSON(file,design);
+      const c=structuredClone(f.presentation);c.design=path.relative(ROOT,file);await writeJSON(f.config,c);
+      const result=await renderV04({input:f.input,config:f.config,output:path.join(dir,'fixed-identity.png')});
+      assert.equal(result.identityRendering.column.color,'rgb(18, 63, 84)');
+      assert.equal(result.typography.brandSignature.color,'rgb(18, 63, 84)');
+      assert.match(result.typography.brandSignature.family,/Noto Serif SC/);
+      assert.equal(result.identityRendering.emphasis.color,'rgb(155, 113, 139)');
+      c.textEmphasis.brandSignature=['向光而行'];await writeJSON(f.config,c);
+      await assert.rejects(loadV04(f.config),/固定品牌强调范围/);
+    }finally{await rm(temporary,{recursive:true,force:true});}
+  });
+  await check('品牌资产摘要与锁登记缺项检测，不修改真实资产',async()=>{
+    const root=path.join(dir,'identity-lock-fixture');
+    const lock=await json(path.join(ROOT,'config/brand/identity.v1.lock.json'));
+    for(const file of ['config/brand/identity.v1.lock.json',...Object.keys(lock.files)]) {
+      await mkdir(path.dirname(path.join(root,file)),{recursive:true});
+      await writeFile(path.join(root,file),await readFile(path.join(ROOT,file)));
+    }
+    assert.equal((await loadIdentity(root)).column,'康复小纸条');
+    const symbol='assets/brand/signature-petals.v2.svg';
+    await writeFile(path.join(root,symbol),'changed');await assert.rejects(loadIdentity(root),/已锁定文件被修改/);
+    await writeFile(path.join(root,symbol),await readFile(path.join(ROOT,symbol)));
+    delete lock.files[symbol];await writeJSON(path.join(root,'config/brand/identity.v1.lock.json'),lock);
+    await assert.rejects(loadIdentity(root),/锁定登记缺失或不完整/);
+  });
   await check('四条版真实字体层级、斜体编号、语义图标和完整品牌',async()=>{
     four=await renderV04({input:f.input,config:f.config,output:path.join(dir,'four.png')});
     assert.equal(four.width,2160);assert.equal(four.height,2700);assert.equal(four.contentIntegrity,true);assert.deepEqual(four.errors,[]);
@@ -23,10 +61,13 @@ test('V0.4 实际Chromium视觉系统与外部背景确认',async t=>{
     assert.equal(four.typography.pointHeading.weight,'700');assert.equal(four.typography.pointHeading.size,'32px');assert.equal(four.typography.pointBody.weight,'400');assert.equal(four.typography.pointBody.size,'24px');
     assert.match(four.typography.introduction.family,/Noto Serif SC/);assert.match(four.typography.pointNumber.family,/Libre Baskerville/);assert.equal(four.typography.pointNumber.style,'italic');
     assert.equal(four.typography.pointNumber.synthesis,'none');assert.ok(four.loadedFaces.some(f=>f.family.includes('Libre Baskerville')&&f.style==='italic'&&f.weight==='400'));
-    assert.equal(four.brand.symbolStatus,'pending_confirmation');assert.ok(four.warnings.some(x=>x.includes('候选')));
+    assert.equal(four.brand.symbolStatus,'confirmed');assert.deepEqual(four.warnings,[]);
+    assert.equal(four.identityRendering.column.color,'rgb(18, 63, 84)');assert.equal(four.identityRendering.column.weight,'700');
+    assert.equal(four.identityRendering.emphasis.text,'粉红伙伴社区');assert.equal(four.identityRendering.emphasis.color,'rgb(155, 113, 139)');
+    assert.match(four.typography.brandSignature.family,/Noto Serif SC/);
     const browser=await chromium.launch();try{const page=await browser.newPage();await page.goto('file://'+four.preview);await page.evaluate(()=>document.fonts.ready);
       assert.equal(await page.locator('.brand-symbol').count(),1);assert.equal(await page.locator('#brand-cn').textContent(),'向光而行 粉红伙伴社区');
-      assert.equal(await page.locator('#brand-cn .text-emphasis').textContent(),'粉红');
+      assert.equal(await page.locator('#brand-cn .text-emphasis').textContent(),'粉红伙伴社区');
       assert.notEqual(await page.locator('.brand-symbol').evaluate(el=>getComputedStyle(el).maskImage),'none');
     }finally{await browser.close();}
   });
@@ -103,7 +144,7 @@ test('V0.4 实际Chromium视觉系统与外部背景确认',async t=>{
       }
       const brand=await json(path.join(ROOT,'config/brand/brand-signature.v1.json'));brand.symbolStatus='confirmed';
       const file=path.join(temporary,'brand.json');await writeJSON(file,brand);const c=structuredClone(f.presentation);c.brand=path.relative(ROOT,file);await writeJSON(f.config,c);
-      await assert.rejects(loadV04(f.config),/正式品牌符号缺少/);
+      await assert.rejects(loadV04(f.config),/品牌规范/);
     }finally{await rm(temporary,{recursive:true,force:true});}
   });
   await check('拒绝越界临时背景、符号链接逃逸及覆盖确认背景/归档素材',async()=>{

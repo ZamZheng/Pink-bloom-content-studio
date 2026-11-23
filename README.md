@@ -11,11 +11,13 @@ node scripts/render-v04.mjs --background-preview --config /tmp/run/config.json -
 node scripts/render-v04.mjs --preview --input /tmp/run/content.json --config /tmp/run/config.json --output /tmp/run/preview.html
 # 仅背景已确认、质量与几何检查通过时输出2160×2700 PNG
 node scripts/render-v04.mjs --input /tmp/run/content.json --config /tmp/run/config.json --output /tmp/run/card.png
-# 通用工程样张，不使用真实期数或患者资料
+# 通用工程样张，NO.000为测试保留值，不使用患者资料
 node scripts/examples-v04.mjs
+# 固定品牌组件与四色圆环使用示意
+node scripts/brand-specimen.mjs
 ```
 
-**新的花瓣线稿是待用户确认的品牌候选，不是正式Logo。** 背景审美、无字性和医学内容均保留人工审核。没有接入Notion或自动发布服务，不存储第003期业务成品。
+**新生产的栏目头与组织落款现使用[固定品牌规范V1](docs/brand-identity.v1.md)：深海蓝#123f54、灰紫粉#9b718b、稳定细线SVG与本地开源字体；错名、旧候选、锁定资产被修改会报错。** 背景审美、无字性和医学内容均保留人工审核。没有接入Notion或自动发布服务，不存储第003期业务成品。
 
 以下V0.3说明保留为旧入口的兼容/复现文档，其中“未确认版本”等描述属于当时阶段；第002期v2现已有摘要锁，以末尾存档记录为准。
 

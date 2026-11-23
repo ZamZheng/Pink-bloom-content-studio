@@ -11,6 +11,7 @@ export function validateV04Content(data) {
   if(!data || typeof data!=='object' || Array.isArray(data)) throw Error('内容必须为对象');
   for(const k of ['column','issue','title','introduction','reminder_title','reminder','brand_cn','brand_en','review_status']) if(typeof data[k]!=='string'||!data[k].trim()) throw Error(`缺少文案字段 ${k}`);
   if(data.column!=='康复小纸条'||data.brand_en!=='PINK BLOOM'||data.brand_cn!=='向光而行 粉红伙伴社区') throw Error('固定栏目/品牌文字不一致');
+  if(!/^NO\.\d{3,}$/.test(data.issue)) throw Error('期数必须为NO.加至少三位数字，例如NO.001；不得写入其他栏目文字');
   if(!['draft','pending_review','approved','rejected'].includes(data.review_status)) throw Error('医学状态无效；仅照录外部人工数据');
   if(!Array.isArray(data.points)||![3,4].includes(data.points.length)) throw Error('知识点必须为3或4条，不自动凑数');
   for(const p of data.points) for(const k of ['heading','body']) if(typeof p?.[k]!=='string'||!p[k].trim()) throw Error(`知识点缺少 ${k}`);
@@ -26,7 +27,7 @@ async function fontCSS(files) {
 }
 function variables(p) {
   const l=p.layout,c=p.design.colors,g=p.background.geometry;
-  const vars={'--paper':c.paper,'--ink':c.ink,'--icon-color':c.icon,'--disc-color':c.disc,'--rule-color':c.rule,'--reminder-fill':c.reminder,'--brand-pink':c.brandPink,'--brand-symbol-color':c.brandSymbol};
+  const vars={'--paper':c.paper,'--ink':c.ink,'--icon-color':c.icon,'--disc-color':c.disc,'--rule-color':c.rule,'--reminder-fill':c.reminder,'--brand-pink':p.brand.colors.mauve,'--brand-symbol-color':p.brand.colors.navy,'--identity-navy':p.brand.colors.navy,'--identity-rule':p.brand.colors.rule,'--leaf-size':p.brand.metrics.leafSize+'px'};
   for(const [k,v] of Object.entries(l)) vars['--'+k.replace(/[A-Z]/g,x=>'-'+x.toLowerCase())]=typeof v==='number'?`${v}px`:v;
   for(const [name,rect] of Object.entries(g.safeAreas)) for(const k of ['x','y','width','height']) vars[`--${name}-${k}`]=`${rect[k]}px`;
   vars['--brand-mask']=cssMask(p.brand.symbol);
@@ -49,8 +50,9 @@ async function produce({input,config,output},previewOnly) {
     const r=p.design.typography[role]; style+=cssRole(r,`[data-role="${role}"]`);
     if(r.emphasis) style+=cssRole({...r,...r.emphasis},`[data-role="${role}"] .text-emphasis`);
   }
+  for(const [key,id] of [['column','column'],['issue','issue'],['english','brand-en']]) style+=cssRole(p.brand.masthead[key],`#${id}`);
   style+='\n#brand-cn .text-emphasis{color:var(--brand-pink)}';
-  const leaf=await svg(path.join(ROOT,'assets/icons/leaf.svg')),shield=await svg(path.join(ROOT,'assets/icons/shield.svg'));
+  const leaf=p.brand.leaf,shield=await svg(path.join(ROOT,'assets/icons/shield.svg'));
   style+=`:root{--leaf-mask:${cssMask(leaf)};--shield-mask:${cssMask(shield)}}`;
   const browser=await chromium.launch({headless:true});
   try {
@@ -60,7 +62,7 @@ async function produce({input,config,output},previewOnly) {
     page.on('requestfailed',r=>resourceErrors.push(r.url()));page.on('pageerror',e=>resourceErrors.push(e.message));
     await page.goto(pathToFileURL(path.join(ROOT,'template/editorial.v04.html')).href);
     await page.addStyleTag({content:style});
-    await page.evaluate(({data,icons,emphasis,background})=>{
+    await page.evaluate(({data,icons,emphasis,background,brandEmphasis})=>{
       function fill(el,value,phrases=[]) {
         el.textContent='';
         const matches=phrases.map(word=>({word,start:value.indexOf(word)})).sort((a,b)=>a.start-b.start);let cursor=0;
@@ -70,7 +72,7 @@ async function produce({input,config,output},previewOnly) {
           const span=document.createElement('span');span.className='text-emphasis';span.textContent=word;el.append(span);cursor=start+word.length;
         }el.append(document.createTextNode(value.slice(cursor)));
       }
-      for(const [id,key,role] of [['column','column'],['issue','issue'],['brand-en','brand_en'],['title','title','heroTitle'],['introduction','introduction','introduction'],['reminder-title','reminder_title','reminderHeading'],['reminder','reminder','reminderBody'],['brand-cn','brand_cn','brandSignature']]) fill(document.getElementById(id),data[key],role==='brandSignature'?['粉红']:emphasis[role]||[]);
+      for(const [id,key,role] of [['column','column'],['issue','issue'],['brand-en','brand_en'],['title','title','heroTitle'],['introduction','introduction','introduction'],['reminder-title','reminder_title','reminderHeading'],['reminder','reminder','reminderBody'],['brand-cn','brand_cn','brandSignature']]) fill(document.getElementById(id),data[key],role==='brandSignature'?[brandEmphasis]:emphasis[role]||[]);
       data.points.forEach((point,i)=>{
         const li=document.createElement('li');li.className='point';li.dataset.region=`知识点 ${i+1}`;li.setAttribute('data-block','');li.dataset.iconId=icons[i].id;
         const disc=document.createElement('span');disc.className='point-disc';disc.setAttribute('aria-hidden','true');
@@ -82,9 +84,9 @@ async function produce({input,config,output},previewOnly) {
         group.append(heading,body);li.append(disc,number,group);document.getElementById('points').append(li);
       });
       document.getElementById('background').src=background;
-    },{data,icons,emphasis:p.textEmphasis,background:pathToFileURL(p.background.file).href});
+    },{data,icons,emphasis:p.textEmphasis,brandEmphasis:p.brand.emphasis,background:pathToFileURL(p.background.file).href});
     const loadedFaces=await page.evaluate(async()=>{
-      for(const el of document.querySelectorAll('[data-role],#masthead')) {
+      for(const el of document.querySelectorAll('[data-role],#column,#issue,#brand-en')) {
         const s=getComputedStyle(el);await document.fonts.load(`${s.fontStyle} ${s.fontWeight} ${s.fontSize} ${s.fontFamily}`,el.textContent);
         for(const span of el.querySelectorAll('.text-emphasis')) {const e=getComputedStyle(span);await document.fonts.load(`${e.fontStyle} ${e.fontWeight} ${e.fontSize} ${e.fontFamily}`,span.textContent);}
       }
@@ -118,10 +120,12 @@ async function produce({input,config,output},previewOnly) {
       const r=p.design.typography[role];
       if(!loadedFaces.some(f=>f.family.replace(/["']/g,'')===r.family&&f.weight===String(r.weight)&&f.style===r.style)) throw Error(`未真实加载 ${role} 的${r.weight}/${r.style}字体`);
     }
+    const identityRendering=await page.evaluate(()=>Object.fromEntries(['column','issue','brand-en','brand-cn'].map(id=>{const el=document.getElementById(id),s=getComputedStyle(el);return[id,{text:el.textContent,family:s.fontFamily,size:s.fontSize,weight:s.fontWeight,color:s.color,tracking:s.letterSpacing}]})));
+    identityRendering.emphasis=await page.locator('#brand-cn .text-emphasis').evaluate(el=>({text:el.textContent,color:getComputedStyle(el).color}));
     const sourceHashes={};for(const f of [...p.sourceFiles,...p.fontFiles,...icons.map(i=>i.file)]) sourceHashes[f]=sha256(await readFile(path.join(ROOT,f)));
     const errors=[...checks.errors,...p.background.qualityErrors.map(detail=>({type:'background-quality',region:'背景',detail}))];
     const approvalErrors=p.background.approvalErrors;
-    const report={schemaVersion:4,ok:errors.length===0,exportAllowed:errors.length===0&&approvalErrors.length===0,errors,approvalErrors,warnings:p.brand.symbolStatus==='pending_confirmation'?['品牌符号为临时矢量候选，仍待用户确认；不冒充正式Logo']:[],contentIntegrity:true,contentHash:sha256(JSON.stringify(data)),configHash:sha256(JSON.stringify(p.config)),review_status:data.review_status,metrics:checks.metrics,typography,fonts,loadedFaces,icons:icons.map(({svg,...r})=>r),brand:{...p.brand,symbol:undefined},background:{status:p.background.status,width:p.background.width,height:p.background.height,imageSha256:p.background.digest,geometrySha256:p.background.geometrySha256,confirmation:p.background.confirmation},sourceHashes};
+    const report={schemaVersion:4,ok:errors.length===0,exportAllowed:errors.length===0&&approvalErrors.length===0,errors,approvalErrors,warnings:p.brand.symbolStatus==='pending_confirmation'?['品牌符号为临时矢量候选，仍待用户确认；不冒充正式Logo']:[],contentIntegrity:true,contentHash:sha256(JSON.stringify(data)),configHash:sha256(JSON.stringify(p.config)),review_status:data.review_status,metrics:checks.metrics,identityRendering,typography,fonts,loadedFaces,icons:icons.map(({svg,...r})=>r),brand:{...p.brand,symbol:undefined,leaf:undefined},background:{status:p.background.status,width:p.background.width,height:p.background.height,imageSha256:p.background.digest,geometrySha256:p.background.geometrySha256,confirmation:p.background.confirmation},sourceHashes};
     const destination=path.resolve(output),previewFile=previewOnly?destination:destination.replace(/\.png$/,'.preview.html'),reportFile=destination.replace(/\.(html|png)$/,'.report.json');
     await mkdir(path.dirname(destination),{recursive:true});
     const snapshot=await page.content();

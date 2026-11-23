@@ -5,6 +5,6 @@
   "parameters":{
     "titleWidth":850,"titleAlign":"left","introGap":22,"pointsGap":24,"pointGap":0,"rowPadding":10,
     "columnGap":24,"iconColumn":100,"numberColumn":70,"iconDiscSize":86,"headingGap":6,"rowAlign":"center","ruleWidth":1,
-    "reminderGap":24,"reminderRadius":28,"reminderPadding":22,"brandAlign":"flex-end","brandGap":12,"brandSymbolSize":42
+    "reminderGap":24,"reminderRadius":28,"reminderPadding":22,"brandAlign":"center","brandGap":12,"brandSymbolSize":42
   }
 }
