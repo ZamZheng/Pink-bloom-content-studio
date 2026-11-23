@@ -63,8 +63,8 @@ async function validateRole(r, label, fontFiles) {
     await validateFont({ ...r, ...r.emphasis }, `${label}.emphasis`, fontFiles);
   }
 }
-const DEFAULT_LAYOUT = { titleWidth: 850, titleAlign: 'left', introGap: 22, pointsGap: 24, pointGap: 0, rowPadding: 10, columnGap: 24, iconColumn: 100, numberColumn: 70, iconDiscSize: 86, headingGap: 6, rowAlign: 'center', ruleWidth: 1, reminderGap: 24, reminderRadius: 28, reminderPadding: 22, brandAlign: 'flex-end', brandGap: 12, brandSymbolSize: 42 };
-const LIMITS = { titleWidth: [200,1080], introGap:[0,100], pointsGap:[0,100], pointGap:[0,100], rowPadding:[0,40], columnGap:[0,60], iconColumn:[50,140], numberColumn:[40,120], iconDiscSize:[40,120], headingGap:[0,30], ruleWidth:[0,3], reminderGap:[0,100], reminderRadius:[0,100], reminderPadding:[0,60], brandGap:[0,40], brandSymbolSize:[20,80] };
+const DEFAULT_LAYOUT = { titleWidth: 850, titleAlign: 'left', pointsInset: 0, reminderInset: 0, introGap: 22, pointsGap: 24, pointGap: 0, rowPadding: 10, columnGap: 24, iconColumn: 100, numberColumn: 70, iconDiscSize: 86, headingGap: 6, rowAlign: 'center', ruleWidth: 1, reminderGap: 24, reminderRadius: 28, reminderPadding: 22, brandAlign: 'flex-end', brandGap: 12, brandSymbolSize: 42 };
+const LIMITS = { titleWidth: [200,1080], pointsInset:[0,300], reminderInset:[0,300], introGap:[0,100], pointsGap:[0,100], pointGap:[0,100], rowPadding:[0,40], columnGap:[0,60], iconColumn:[50,140], numberColumn:[40,120], iconDiscSize:[40,120], headingGap:[0,30], ruleWidth:[0,3], reminderGap:[0,100], reminderRadius:[0,100], reminderPadding:[0,60], brandGap:[0,40], brandSymbolSize:[20,80] };
 export function rect(r, label) {
   keys(r, ['x','y','width','height','id'], label);
   for (const k of ['x','y','width','height']) num(r[k], ['width','height'].includes(k) ? 1 : 0, 1350, `${label} 安全区`);
@@ -108,6 +108,8 @@ export async function loadV04(configFile) {
   layout.brandSymbolSize=brand.metrics.symbolSize;
   const background=await loadBackground(c.background, path.dirname(filename));
   if (layout.titleWidth>background.geometry.safeAreas.content.width) fail('标题宽度超出安全区');
+  if(layout.pointsInset+layout.iconColumn+layout.numberColumn+2*layout.columnGap>=background.geometry.safeAreas.content.width) fail('知识列表缩进后没有足够正文空间');
+  if(layout.reminderInset+2*layout.reminderPadding+80>=background.geometry.safeAreas.content.width) fail('提醒缩进后没有足够正文空间');
   const textEmphasis=c.textEmphasis || {};
   keys(textEmphasis, ROLES, 'textEmphasis');
   if (textEmphasis.brandSignature!==undefined) fail('固定品牌强调范围不可通过本期配置改变');

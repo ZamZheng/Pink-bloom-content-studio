@@ -17,6 +17,16 @@ test('V0.4 实际Chromium视觉系统与外部背景确认',async t=>{
   const reset=async()=>{await writeFile(f.backgroundFile,f.bytes);await writeJSON(f.input,f.data);await writeJSON(f.config,f.presentation);};
   const check=(name,fn)=>t.test(name,async()=>{await reset();try{await fn();}finally{await reset();}});
   let four;
+  await check('列表与提醒局部缩进避开边缘静物，标题保留主网格且字号不缩小',async()=>{
+    const c=structuredClone(f.presentation);c.parameters={pointsInset:160,reminderInset:160};
+    c.background.geometry.avoidAreas.push({id:'edge-still-life',x:0,y:800,width:220,height:400});
+    c.background.confirmation.geometrySha256=geometryHash(c.background.geometry);await writeJSON(f.config,c);
+    const r=await renderV04({input:f.input,config:f.config,output:path.join(dir,'inset.png')});
+    assert.equal(r.metrics.find(m=>m.region==='主标题').x,72);
+    assert.equal(r.metrics.find(m=>m.region==='知识点 1').x,232);
+    assert.equal(r.metrics.find(m=>m.region==='重要提醒').x,232);
+    assert.equal(r.typography.pointBody.size,'24px');assert.equal(r.contentIntegrity,true);
+  });
   await check('默认npm命令调用新版；背景未确认时预览不放行正式导出',async()=>{
     const output=path.join(dir,'npm-default.png');
     execFileSync('npm',['run','render','--','--input',f.input,'--config',f.config,'--output',output],{cwd:ROOT,maxBuffer:8*1024*1024});

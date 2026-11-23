@@ -9,12 +9,12 @@
 #issue{padding-left:20px;border-left:1px solid var(--identity-rule);white-space:nowrap}.masthead-rule{flex:1;border-top:1px solid var(--identity-rule);margin-top:22px}
 .surface{position:absolute;left:var(--content-x);top:var(--content-y);width:var(--content-width);height:var(--content-height);display:flex;flex-direction:column;gap:0}
 .surface>*{flex-shrink:0}#title{max-width:var(--title-width);text-align:var(--title-align)}#introduction{margin-top:var(--intro-gap)}
-#points{list-style:none;display:flex;flex-direction:column;gap:var(--point-gap);margin-top:var(--points-gap)}
+#points{margin-left:var(--points-inset);list-style:none;display:flex;flex-direction:column;gap:var(--point-gap);margin-top:var(--points-gap)}
 .point{display:grid;grid-template-columns:var(--icon-column) var(--number-column) minmax(0,1fr);column-gap:var(--column-gap);padding:var(--row-padding) 0;align-items:var(--row-align)}
 .point+.point{border-top:var(--rule-width) solid var(--rule-color)}.point-disc{width:var(--icon-disc-size);height:var(--icon-disc-size);border-radius:50%;background:var(--disc-color);display:grid;place-items:center;justify-self:center}
 .point-icon{width:58%;height:58%;display:block;color:var(--icon-color)}.point-icon svg{width:100%;height:100%;display:block}.point-number{align-self:start;padding-top:3px;font-variant-numeric:lining-nums tabular-nums}
 .point-copy-group{display:flex;flex-direction:column;gap:var(--heading-gap);min-width:0}
-#reminder-box{display:grid;grid-template-columns:60px minmax(0,1fr);gap:20px;align-items:center;background:var(--reminder-fill);border-radius:var(--reminder-radius);padding:var(--reminder-padding);margin-top:var(--reminder-gap)}
+#reminder-box{margin-left:var(--reminder-inset);display:grid;grid-template-columns:60px minmax(0,1fr);gap:20px;align-items:center;background:var(--reminder-fill);border-radius:var(--reminder-radius);padding:var(--reminder-padding);margin-top:var(--reminder-gap)}
 .reminder-shield{width:50px;height:60px;background:var(--icon-color);mask:var(--shield-mask) center/contain no-repeat}#reminder{margin-top:6px}
 #brand-signature{position:absolute;left:var(--brand-x);top:var(--brand-y);width:var(--brand-width);display:flex;align-items:center;justify-content:var(--brand-align);gap:var(--brand-gap)}
 .brand-symbol{width:var(--brand-symbol-size);height:var(--brand-symbol-size);flex:none;background:var(--brand-symbol-color);mask:var(--brand-mask) center/contain no-repeat}#brand-cn{white-space:pre-wrap}
